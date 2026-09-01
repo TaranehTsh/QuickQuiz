@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap');
+
+:root {
+  font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #182033;
+  background:
+    radial-gradient(circle at 12% 5%, rgba(112, 115, 255, 0.34), transparent 30%),
+    radial-gradient(circle at 92% 14%, rgba(29, 199, 150, 0.18), transparent 25%),
+    #171b36;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline-offset: 3px;
+}

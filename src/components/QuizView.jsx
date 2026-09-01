@@ -1,0 +1,86 @@
+import { useEffect, useRef, useState } from 'react'
+
+export default function QuizView({
+  activePlayerName,
+  category,
+  question,
+  timeLimit,
+  onSubmitAnswer,
+}) {
+  const [timeRemaining, setTimeRemaining] = useState(timeLimit)
+  const [locked, setLocked] = useState(false)
+  const timedOutRef = useRef(false)
+
+  useEffect(() => {
+    if (locked) {
+      return undefined
+    }
+
+    if (timeRemaining <= 0) {
+      if (!timedOutRef.current) {
+        timedOutRef.current = true
+        onSubmitAnswer('', 0)
+      }
+      return undefined
+    }
+
+    const timerId = window.setTimeout(() => {
+      setTimeRemaining((current) => current - 1)
+    }, 1000)
+
+    return () => window.clearTimeout(timerId)
+  }, [locked, onSubmitAnswer, timeRemaining])
+
+  function handleAnswer(answer) {
+    if (locked) {
+      return
+    }
+
+    setLocked(true)
+    onSubmitAnswer(answer, timeRemaining)
+  }
+
+  const progress = (timeRemaining / timeLimit) * 100
+
+  return (
+    <div
+      className="view-panel"
+      style={{ '--category-colour': category.getColour() }}
+    >
+      <div className="quiz-meta">
+        <span className="category-label">{category.name}</span>
+        <span className={`timer ${timeRemaining <= 5 ? 'urgent' : ''}`}>
+          {timeRemaining}s left
+        </span>
+      </div>
+
+      <div
+        aria-label={`${timeRemaining} seconds remaining`}
+        aria-valuemax={timeLimit}
+        aria-valuemin="0"
+        aria-valuenow={timeRemaining}
+        className="timer-track"
+        role="progressbar"
+      >
+        <div className="timer-fill" style={{ width: `${progress}%` }} />
+      </div>
+
+      <p className="view-kicker">Question for {activePlayerName}</p>
+      <h2 className="question-prompt">{question.prompt}</h2>
+
+      <div className="answer-grid">
+        {question.options.map((option) => (
+          <button
+            className="answer-button"
+            disabled={locked}
+            key={option}
+            onClick={() => handleAnswer(option)}
+            type="button"
+          >
+            {option}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
