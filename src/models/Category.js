@@ -14,6 +14,10 @@ export default class Category {
     return [...this.questions]
   }
 
+  addQuestions(questions) {
+    this.questions.push(...questions)
+  }
+
   getColour() {
     return this.colour
   }

@@ -1,6 +1,17 @@
 import Category from '../models/Category.js'
 import Question from '../models/Question.js'
 
+function shuffle(items) {
+  const copy = [...items]
+
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1))
+    ;[copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]]
+  }
+
+  return copy
+}
+
 export default class CategoryQuestionRepository {
   constructor(categories = []) {
     this.categories = categories.map((category) => {
@@ -24,6 +35,7 @@ export default class CategoryQuestionRepository {
     })
 
     this.questionCursor = new Map()
+    this.usedQuestionIds = new Map()
   }
 
   getCategories() {
@@ -43,13 +55,49 @@ export default class CategoryQuestionRepository {
   }
 
   getQuestion(categoryId) {
-    const category = this.getCategory(categoryId)
-    const questions = category.getQuestions()
-    const currentIndex = this.questionCursor.get(categoryId) ?? 0
-    const question = questions[currentIndex % questions.length]
+    const questions = this.getQuestionSet(categoryId, 1)
+    return questions[0]
+  }
 
-    this.questionCursor.set(categoryId, currentIndex + 1)
-    return question
+  getQuestionSet(categoryId, count) {
+    const category = this.getCategory(categoryId)
+    const usedIds = this.usedQuestionIds.get(categoryId) ?? new Set()
+    const allQuestions = category.getQuestions()
+    const unusedQuestions = allQuestions.filter(
+      (question) => !usedIds.has(question.questionId),
+    )
+    const pool =
+      unusedQuestions.length >= count ? unusedQuestions : allQuestions
+    const selected = shuffle(pool).slice(0, count)
+
+    if (selected.length < count) {
+      throw new Error(
+        `Category ${categoryId} needs at least ${count} questions.`,
+      )
+    }
+
+    const nextUsed = new Set(usedIds)
+    selected.forEach((question) => nextUsed.add(question.questionId))
+    this.usedQuestionIds.set(categoryId, nextUsed)
+
+    return selected
+  }
+
+  ingestQuestions(categoryId, rawQuestions) {
+    const category = this.getCategory(categoryId)
+    const questions = rawQuestions.map(
+      (question) =>
+        new Question(
+          question.questionId,
+          question.prompt,
+          question.options,
+          question.correctAnswer,
+          categoryId,
+        ),
+    )
+
+    category.addQuestions(questions)
+    return questions
   }
 
   getQuestionById(questionId) {

@@ -7,14 +7,18 @@ import ResultsView from './components/ResultsView.jsx'
 import QuizAndTimerController from './controllers/QuizAndTimerController.js'
 import TurnAndCategoryController from './controllers/TurnAndCategoryController.js'
 import { categoryData } from './data/questions.js'
+import {
+  CHALLENGES_PER_GAME,
+  QUESTIONS_PER_CATEGORY_SET,
+  QUESTIONS_PER_PLAYER,
+  QUESTION_TIME_LIMIT,
+} from './gameConfig.js'
 import GameSession from './models/GameSession.js'
 import Player from './models/Player.js'
 import CategoryQuestionRepository from './repositories/CategoryQuestionRepository.js'
+import QuizApiQuestionService from './services/QuizApiQuestionService.js'
 import PlayerResults from './services/PlayerResults.js'
 import ResultsService from './services/ResultsService.js'
-
-const TOTAL_ROUNDS = 4
-const QUESTION_TIME_LIMIT = 15
 
 const playerNames = {
   'player-1': 'Player 1',
@@ -37,6 +41,7 @@ function createGame() {
       playerResults,
       QUESTION_TIME_LIMIT,
     ),
+    questionService: new QuizApiQuestionService(repository),
     resultsService: new ResultsService(
       gameSession,
       playerResults,
@@ -51,21 +56,42 @@ function App() {
   const [currentQuestion, setCurrentQuestion] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [feedback, setFeedback] = useState(null)
+  const [challengeOutcome, setChallengeOutcome] = useState(null)
   const [finalResults, setFinalResults] = useState(null)
 
   const { gameSession } = game
   const activePlayer = gameSession.getActivePlayer()
+  const currentRound = gameSession.getCurrentRound()
+  const displayedSet = Math.min(
+    Math.max(gameSession.challenges.length, 1),
+    CHALLENGES_PER_GAME,
+  )
+  const displayedQuestion =
+    currentRound && currentRound.currentQuestionIndex >= 0
+      ? currentRound.currentQuestionIndex + 1
+      : 1
 
-  function handleCategorySelect(categoryId) {
+  async function handleCategorySelect(categoryId) {
     const categoryChoice = game.turnController.chooseCategory(
       gameSession.activePlayerId,
       categoryId,
     )
-    const question = game.quizController.startRound(categoryId)
 
     setSelectedCategory(categoryChoice.category)
+    setView('loading')
+
+    const questionSets = await game.questionService.getCategoryQuestionSets(
+      categoryChoice.category,
+    )
+    const question = game.quizController.startChooserTurn(
+      categoryId,
+      questionSets.chooserQuestions,
+      questionSets.opponentQuestions,
+    )
+
     setCurrentQuestion(question)
     setFeedback(null)
+    setChallengeOutcome(null)
     setView('quiz')
   }
 
@@ -81,17 +107,47 @@ function App() {
   }
 
   function handleContinue() {
-    if (game.quizController.isQuizComplete(TOTAL_ROUNDS)) {
+    const nextQuestion = game.quizController.continueIfMoreQuestions()
+
+    if (nextQuestion) {
+      setCurrentQuestion(nextQuestion)
+      setFeedback(null)
+      setView('quiz')
+      return
+    }
+
+    const outcome = game.quizController.finishActivePlayerTurn()
+    setChallengeOutcome(outcome)
+    setFeedback(null)
+
+    if (!outcome.bothPlayersFinished) {
+      setView('handoff')
+      return
+    }
+
+    setView('challenge-result')
+  }
+
+  function handleHandoffContinue() {
+    const question = game.quizController.startOpponentTurn()
+    setCurrentQuestion(question)
+    setFeedback(null)
+    setView('quiz')
+  }
+
+  function handleChallengeContinue() {
+    if (game.quizController.isQuizComplete(CHALLENGES_PER_GAME)) {
       gameSession.finishRound()
       setFinalResults(game.resultsService.getFinalResults())
       setView('results')
       return
     }
 
-    game.turnController.alternateActivePlayer()
+    game.turnController.startNextChooserTurn()
     setCurrentQuestion(null)
     setSelectedCategory(null)
     setFeedback(null)
+    setChallengeOutcome(null)
     setView('category')
   }
 
@@ -100,11 +156,10 @@ function App() {
     setCurrentQuestion(null)
     setSelectedCategory(null)
     setFeedback(null)
+    setChallengeOutcome(null)
     setFinalResults(null)
     setView('category')
   }
-
-  const displayedRound = Math.min(gameSession.rounds.length + 1, TOTAL_ROUNDS)
 
   return (
     <main className="app-shell">
@@ -116,9 +171,10 @@ function App() {
 
         <div
           className="round-pill"
-          aria-label={`Round ${displayedRound} of ${TOTAL_ROUNDS}`}
+          aria-label={`Set ${displayedSet} of ${CHALLENGES_PER_GAME}, question ${displayedQuestion} of ${QUESTIONS_PER_PLAYER}`}
         >
-          Round {displayedRound}/{TOTAL_ROUNDS}
+          Set {displayedSet}/{CHALLENGES_PER_GAME} · Q {displayedQuestion}/
+          {QUESTIONS_PER_PLAYER}
         </div>
       </header>
 
@@ -147,8 +203,22 @@ function App() {
           />
         )}
 
+        {view === 'loading' && (
+          <div className="view-panel">
+            <p className="view-kicker">Getting questions</p>
+            <h2>
+              Loading {QUESTIONS_PER_CATEGORY_SET} {selectedCategory?.name}{' '}
+              questions
+            </h2>
+            <p className="view-description">
+              Please wait while the next set of questions is prepared.
+            </p>
+          </div>
+        )}
+
         {view === 'quiz' && currentQuestion && selectedCategory && (
           <QuizView
+            key={`${gameSession.activePlayerId}-${currentQuestion.questionId}`}
             activePlayerName={playerNames[activePlayer.playerId]}
             category={selectedCategory}
             question={currentQuestion}
@@ -163,6 +233,57 @@ function App() {
             feedback={feedback}
             onContinue={handleContinue}
           />
+        )}
+
+        {view === 'handoff' && challengeOutcome && (
+          <div className="view-panel">
+            <p className="view-kicker">Pass the device</p>
+            <h2>
+              {playerNames[challengeOutcome.nextPlayerId]} plays next
+            </h2>
+            <p className="view-description">
+              Same category, three different questions. Player{' '}
+              {playerNames[challengeOutcome.challenge.chooserPlayerId]} scored{' '}
+              {challengeOutcome.scores[challengeOutcome.challenge.chooserPlayerId]}
+              /{QUESTIONS_PER_PLAYER}.
+            </p>
+            <button
+              className="primary-button"
+              onClick={handleHandoffContinue}
+              type="button"
+            >
+              Start {playerNames[challengeOutcome.nextPlayerId]}&apos;s
+              questions
+            </button>
+          </div>
+        )}
+
+        {view === 'challenge-result' && challengeOutcome && (
+          <div className="view-panel">
+            <p className="view-kicker">Set {displayedSet} result</p>
+            <h2>
+              {challengeOutcome.isTie
+                ? 'This set is a tie'
+                : `${playerNames[challengeOutcome.winnerId]} wins this set`}
+            </h2>
+            <p className="view-description">
+              {gameSession.players
+                .map(
+                  (player) =>
+                    `${playerNames[player.playerId]}: ${
+                      challengeOutcome.scores[player.playerId]
+                    }/${QUESTIONS_PER_PLAYER}`,
+                )
+                .join(' · ')}
+            </p>
+            <button
+              className="primary-button"
+              onClick={handleChallengeContinue}
+              type="button"
+            >
+              Continue
+            </button>
+          </div>
         )}
 
         {view === 'results' && finalResults && (

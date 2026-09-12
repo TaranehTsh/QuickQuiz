@@ -9,6 +9,7 @@ export default class ResultsService {
     const players = this.gameSession.players.map((player) => ({
       playerId: player.playerId,
       score: player.getScore(),
+      challengeWins: player.challengeWins,
       ...this.playerResults.getStatistics(player.playerId, this.repository),
     }))
 
@@ -19,6 +20,12 @@ export default class ResultsService {
       players,
       isTie: winners.length > 1,
       winnerPlayerId: winners.length === 1 ? winners[0].playerId : null,
+      challengeResults: this.gameSession.challenges.map((challenge) => ({
+        challengeNumber: challenge.challengeNumber,
+        categoryId: challenge.categoryId,
+        scores: { ...challenge.playerScores },
+        winnerPlayerId: challenge.getWinnerId(),
+      })),
     }
   }
 }

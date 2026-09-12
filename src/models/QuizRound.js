@@ -56,4 +56,8 @@ export default class QuizRound {
   isComplete() {
     return this.answerRecords.length >= this.questions.length
   }
+
+  getCorrectCount() {
+    return this.answerRecords.filter((record) => record.getResult()).length
+  }
 }

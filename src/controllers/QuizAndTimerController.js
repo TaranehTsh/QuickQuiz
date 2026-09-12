@@ -1,3 +1,5 @@
+import { CHALLENGES_PER_GAME } from '../gameConfig.js'
+import Challenge from '../models/Challenge.js'
 import QuizRound from '../models/QuizRound.js'
 
 export default class QuizAndTimerController {
@@ -13,18 +15,71 @@ export default class QuizAndTimerController {
     this.timeLimitSeconds = timeLimitSeconds
   }
 
-  startRound(categoryId) {
-    const question = this.repository.getQuestion(categoryId)
+  startChooserTurn(categoryId, chooserQuestions, opponentQuestions) {
+    const chooserId = this.gameSession.categoryChooserId
+    const challenge = new Challenge(
+      this.gameSession.challenges.length + 1,
+      categoryId,
+      chooserId,
+      this.gameSession.getOpponentId(chooserId),
+      chooserQuestions,
+      opponentQuestions,
+    )
+
+    this.gameSession.startChallenge(challenge)
+    return this.startPlayerQuestionSet(chooserId, chooserQuestions)
+  }
+
+  startOpponentTurn() {
+    const challenge = this.gameSession.currentChallenge
+
+    if (!challenge) {
+      throw new Error('There is no active challenge.')
+    }
+
+    this.gameSession.activePlayerId = challenge.opponentPlayerId
+    return this.startPlayerQuestionSet(
+      challenge.opponentPlayerId,
+      challenge.opponentQuestions,
+    )
+  }
+
+  startPlayerQuestionSet(playerId, questions) {
     const round = new QuizRound(
       this.gameSession.rounds.length + 1,
-      categoryId,
-      this.gameSession.activePlayerId,
-      [question],
+      this.gameSession.selectedCategoryId,
+      playerId,
+      questions,
       this.timeLimitSeconds,
     )
 
     this.gameSession.addRound(round)
+    this.gameSession.roundState = 'question'
     return round.startQuestion()
+  }
+
+  continueIfMoreQuestions() {
+    const round = this.gameSession.getCurrentRound()
+
+    if (!round || round.isComplete()) {
+      return null
+    }
+
+    this.gameSession.roundState = 'question'
+    return round.startQuestion()
+  }
+
+  finishActivePlayerTurn() {
+    const round = this.gameSession.getCurrentRound()
+
+    if (!round) {
+      throw new Error('There is no active question set.')
+    }
+
+    return this.gameSession.completePlayerTurn(
+      this.gameSession.activePlayerId,
+      round.getCorrectCount(),
+    )
   }
 
   checkAnswer(playerId, answer, timeRemaining) {
@@ -59,7 +114,7 @@ export default class QuizAndTimerController {
     }
   }
 
-  isQuizComplete(totalRounds) {
-    return this.gameSession.rounds.length >= totalRounds
+  isQuizComplete(totalChallenges = CHALLENGES_PER_GAME) {
+    return this.gameSession.isGameComplete(totalChallenges)
   }
 }

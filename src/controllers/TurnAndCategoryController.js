@@ -5,6 +5,10 @@ export default class TurnAndCategoryController {
   }
 
   chooseCategory(playerId, categoryId) {
+    if (playerId !== this.gameSession.categoryChooserId) {
+      throw new Error('Only the category chooser can select a category.')
+    }
+
     const category = this.repository.getCategory(categoryId)
     this.gameSession.selectCategory(categoryId, playerId)
 
@@ -16,6 +20,11 @@ export default class TurnAndCategoryController {
     }
   }
 
+  startNextChooserTurn() {
+    this.gameSession.rotateChooser()
+    return this.getTurnState()
+  }
+
   alternateActivePlayer() {
     this.gameSession.alternateActivePlayer()
     return this.gameSession.activePlayerId
@@ -24,6 +33,7 @@ export default class TurnAndCategoryController {
   getTurnState() {
     return {
       activePlayerId: this.gameSession.activePlayerId,
+      categoryChooserId: this.gameSession.categoryChooserId,
       selectedCategoryId: this.gameSession.selectedCategoryId,
       roundState: this.gameSession.roundState,
     }
