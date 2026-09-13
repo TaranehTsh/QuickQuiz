@@ -7,7 +7,10 @@ export default function AnswerFeedbackView({
 
   return (
     <div className="feedback-view view-panel" role="status">
-      <div className={`feedback-card ${isCorrect ? 'correct' : 'incorrect'}`}>
+      {/* NEW: "feedback-animate" class added — see CSS below for the
+          fade/scale-in keyframes. Covers the "Add visual feedback/
+          animations" checklist item, which wasn't done yet. */}
+      <div className={`feedback-card feedback-animate ${isCorrect ? 'correct' : 'incorrect'}`}>
         <span className="feedback-icon" aria-hidden="true">
           {isCorrect ? '✓' : '×'}
         </span>
