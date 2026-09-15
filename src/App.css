@@ -258,6 +258,23 @@ button {
   transition: width 1s linear;
 }
 
+.timer-fill.urgent {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--danger);
+  animation: timer-flash 0.6s ease-in-out infinite;
+  transition: width 1s linear;
+}
+
+@keyframes timer-flash {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
 .question-prompt {
   margin: 0 0 30px;
   color: var(--ink);

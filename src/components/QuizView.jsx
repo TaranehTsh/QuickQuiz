@@ -62,7 +62,10 @@ export default function QuizView({
         className="timer-track"
         role="progressbar"
       >
-        <div className="timer-fill" style={{ width: `${progress}%` }} />
+        <div 
+          className={`timer-fill ${timeRemaining <= 5 ? 'urgent' : ''}`}
+          style={{ width: `${progress}%` }} 
+          />
       </div>
 
       <p className="view-kicker">Question for {activePlayerName}</p>
