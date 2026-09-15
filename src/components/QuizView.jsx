@@ -6,6 +6,9 @@ export default function QuizView({
   question,
   timeLimit,
   onSubmitAnswer,
+  result, // NEW: the answer result ({ isCorrect, correctAnswer, submittedAnswer, timedOut })
+          // passed down once the player has answered, so buttons can turn green/red.
+          // null/undefined while the question is still unanswered.
 }) {
   const [timeRemaining, setTimeRemaining] = useState(timeLimit)
   const [locked, setLocked] = useState(false)
@@ -38,6 +41,16 @@ export default function QuizView({
 
     setLocked(true)
     onSubmitAnswer(answer, timeRemaining)
+  }
+
+  // NEW: decides each button's color once `result` exists.
+  // Correct answer -> green. The wrong option the player picked -> red.
+  // Everything else just dims out.
+  function getButtonClass(option) {
+    if (!result) return 'answer-button'
+    if (option === result.correctAnswer) return 'answer-button correct'
+    if (option === result.submittedAnswer) return 'answer-button incorrect'
+    return 'answer-button disabled'
   }
 
   const progress = (timeRemaining / timeLimit) * 100
@@ -74,7 +87,7 @@ export default function QuizView({
       <div className="answer-grid">
         {question.options.map((option) => (
           <button
-            className="answer-button"
+            className={getButtonClass(option)}
             disabled={locked}
             key={option}
             onClick={() => handleAnswer(option)}

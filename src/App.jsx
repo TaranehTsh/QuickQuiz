@@ -94,17 +94,22 @@ function App() {
     setChallengeOutcome(null)
     setView('quiz')
   }
-
-  function handleAnswerSubmit(answer, timeRemaining) {
+function handleAnswerSubmit(answer, timeRemaining) {
     const answerResult = game.quizController.checkAnswer(
       gameSession.activePlayerId,
       answer,
       timeRemaining,
     )
 
+    // Show the result on the buttons themselves first (green/red),
+    // THEN move to the full feedback screen after a short pause.
     setFeedback(answerResult)
-    setView('feedback')
+
+    window.setTimeout(() => {
+      setView('feedback')
+    }, 1200)
   }
+
 
   function handleContinue() {
     const nextQuestion = game.quizController.continueIfMoreQuestions()
@@ -224,6 +229,7 @@ function App() {
             question={currentQuestion}
             timeLimit={QUESTION_TIME_LIMIT}
             onSubmitAnswer={handleAnswerSubmit}
+             result={feedback}
           />
         )}
 
