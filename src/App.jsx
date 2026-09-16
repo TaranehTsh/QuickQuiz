@@ -4,6 +4,9 @@ import AnswerFeedbackView from './components/AnswerFeedbackView.jsx'
 import CategorySelectionView from './components/CategorySelectionView.jsx'
 import QuizView from './components/QuizView.jsx'
 import ResultsView from './components/ResultsView.jsx'
+import SignUpView from './components/SignUpView.jsx'
+import LoginView from './components/LoginView.jsx'
+import DashboardView from './components/DashboardView.jsx'
 import QuizAndTimerController from './controllers/QuizAndTimerController.js'
 import TurnAndCategoryController from './controllers/TurnAndCategoryController.js'
 import { categoryData } from './data/questions.js'
@@ -19,6 +22,7 @@ import CategoryQuestionRepository from './repositories/CategoryQuestionRepositor
 import QuizApiQuestionService from './services/QuizApiQuestionService.js'
 import PlayerResults from './services/PlayerResults.js'
 import ResultsService from './services/ResultsService.js'
+import AuthService from './services/AuthService.js'
 
 const playerNames = {
   'player-1': 'Player 1',
@@ -52,7 +56,11 @@ function createGame() {
 
 function App() {
   const [game, setGame] = useState(createGame)
-  const [view, setView] = useState('category')
+  const [authService] = useState(() => new AuthService())
+  const [currentUser, setCurrentUser] = useState(() => authService.getCurrentUser())
+  const [view, setView] = useState(() =>
+    authService.getCurrentUser() ? 'dashboard' : 'login',
+  )
   const [currentQuestion, setCurrentQuestion] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [feedback, setFeedback] = useState(null)
@@ -70,6 +78,30 @@ function App() {
     currentRound && currentRound.currentQuestionIndex >= 0
       ? currentRound.currentQuestionIndex + 1
       : 1
+
+  const inAuthFlow = view === 'login' || view === 'signup' || view === 'dashboard'
+
+  function handleSignUp(details) {
+    const user = authService.signUp(details)
+    setCurrentUser(user)
+    setView('dashboard')
+  }
+
+  function handleLogIn(details) {
+    const user = authService.logIn(details)
+    setCurrentUser(user)
+    setView('dashboard')
+  }
+
+  function handleLogOut() {
+    authService.logOut()
+    setCurrentUser(null)
+    setView('login')
+  }
+
+  function handleStartQuizFromDashboard() {
+    setView('category')
+  }
 
   async function handleCategorySelect(categoryId) {
     const categoryChoice = game.turnController.chooseCategory(
@@ -94,22 +126,20 @@ function App() {
     setChallengeOutcome(null)
     setView('quiz')
   }
-function handleAnswerSubmit(answer, timeRemaining) {
+
+  function handleAnswerSubmit(answer, timeRemaining) {
     const answerResult = game.quizController.checkAnswer(
       gameSession.activePlayerId,
       answer,
       timeRemaining,
     )
 
-    // Show the result on the buttons themselves first (green/red),
-    // THEN move to the full feedback screen after a short pause.
     setFeedback(answerResult)
 
     window.setTimeout(() => {
       setView('feedback')
     }, 1200)
   }
-
 
   function handleContinue() {
     const nextQuestion = game.quizController.continueIfMoreQuestions()
@@ -143,7 +173,18 @@ function handleAnswerSubmit(answer, timeRemaining) {
   function handleChallengeContinue() {
     if (game.quizController.isQuizComplete(CHALLENGES_PER_GAME)) {
       gameSession.finishRound()
-      setFinalResults(game.resultsService.getFinalResults())
+      const results = game.resultsService.getFinalResults()
+      setFinalResults(results)
+
+      if (currentUser) {
+        const me = results.players.find((p) => p.playerId === 'player-1')
+        authService.recordQuizResult(currentUser.email, {
+          score: me?.score ?? 0,
+          won: results.winnerPlayerId === 'player-1',
+          isTie: results.isTie,
+        })
+      }
+
       setView('results')
       return
     }
@@ -163,7 +204,7 @@ function handleAnswerSubmit(answer, timeRemaining) {
     setFeedback(null)
     setChallengeOutcome(null)
     setFinalResults(null)
-    setView('category')
+    setView('dashboard')
   }
 
   return (
@@ -174,32 +215,53 @@ function handleAnswerSubmit(answer, timeRemaining) {
           <h1>QuickQuiz</h1>
         </div>
 
-        <div
-          className="round-pill"
-          aria-label={`Set ${displayedSet} of ${CHALLENGES_PER_GAME}, question ${displayedQuestion} of ${QUESTIONS_PER_PLAYER}`}
-        >
-          Set {displayedSet}/{CHALLENGES_PER_GAME} · Q {displayedQuestion}/
-          {QUESTIONS_PER_PLAYER}
-        </div>
+        {!inAuthFlow && (
+          <div
+            className="round-pill"
+            aria-label={`Set ${displayedSet} of ${CHALLENGES_PER_GAME}, question ${displayedQuestion} of ${QUESTIONS_PER_PLAYER}`}
+          >
+            Set {displayedSet}/{CHALLENGES_PER_GAME} · Q {displayedQuestion}/
+            {QUESTIONS_PER_PLAYER}
+          </div>
+        )}
       </header>
 
-      <section className="score-strip" aria-label="Current scores">
-        {gameSession.players.map((player) => (
-          <article
-            className={`player-score ${
-              player.playerId === gameSession.activePlayerId && view !== 'results'
-                ? 'active'
-                : ''
-            }`}
-            key={player.playerId}
-          >
-            <span>{playerNames[player.playerId]}</span>
-            <strong>{player.getScore()}</strong>
-          </article>
-        ))}
-      </section>
+      {!inAuthFlow && (
+        <section className="score-strip" aria-label="Current scores">
+          {gameSession.players.map((player) => (
+            <article
+              className={`player-score ${
+                player.playerId === gameSession.activePlayerId && view !== 'results'
+                  ? 'active'
+                  : ''
+              }`}
+              key={player.playerId}
+            >
+              <span>{playerNames[player.playerId]}</span>
+              <strong>{player.getScore()}</strong>
+            </article>
+          ))}
+        </section>
+      )}
 
       <section className="game-stage">
+        {view === 'login' && (
+          <LoginView onLogIn={handleLogIn} onSwitchToSignUp={() => setView('signup')} />
+        )}
+
+        {view === 'signup' && (
+          <SignUpView onSignUp={handleSignUp} onSwitchToLogin={() => setView('login')} />
+        )}
+
+        {view === 'dashboard' && currentUser && (
+          <DashboardView
+            user={currentUser}
+            quizHistory={authService.getQuizHistory(currentUser.email)}
+            onStartQuiz={handleStartQuizFromDashboard}
+            onLogOut={handleLogOut}
+          />
+        )}
+
         {view === 'category' && (
           <CategorySelectionView
             activePlayerName={playerNames[activePlayer.playerId]}
@@ -229,7 +291,7 @@ function handleAnswerSubmit(answer, timeRemaining) {
             question={currentQuestion}
             timeLimit={QUESTION_TIME_LIMIT}
             onSubmitAnswer={handleAnswerSubmit}
-             result={feedback}
+            result={feedback}
           />
         )}
 
