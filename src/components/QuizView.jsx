@@ -18,6 +18,7 @@ export default function QuizView({
     }
 
     // developer-Tim
+    // check if time already expired when answer submitted (lag check)
     if (timeRemaining <= 0) {
       if (!timedOutRef.current) {
         timedOutRef.current = true
@@ -61,6 +62,7 @@ export default function QuizView({
       <div className="quiz-meta">
         <span className="category-label">{category.name}</span>
         {/* developer-Tim */}
+        {/* numerical countdown timer display and low time notification */}
         <span className={`timer ${timeRemaining <= 5 ? 'urgent' : ''}`}>
           {timeRemaining}s left
         </span>
@@ -75,6 +77,7 @@ export default function QuizView({
         role="progressbar"
       >
         <div 
+          // visual countdown bar with low time notification
           className={`timer-fill ${timeRemaining <= 5 ? 'urgent' : ''}`}
           style={{ width: `${progress}%` }} 
           />
