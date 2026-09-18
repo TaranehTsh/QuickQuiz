@@ -266,6 +266,7 @@ function App() {
           <CategorySelectionView
             activePlayerName={playerNames[activePlayer.playerId]}
             categories={game.repository.getCategories()}
+            usedCategoryIds={gameSession.getUsedCategoryIds()} // this sends down which categories are already played so the buttons know which ones to grey out
             onSelectCategory={handleCategorySelect}
           />
         )}

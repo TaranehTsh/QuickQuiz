@@ -13,7 +13,7 @@ export default class GameSession {
     this.sessionId = sessionId
     this.players = [...players]
     this.activePlayerId = players[0].playerId
-    this.categoryChooserId = players[0].playerId
+    this.categoryChooserId = players[0].playerId 
     this.selectedCategoryId = null
     this.roundState = 'category-selection'
     this.rounds = []
@@ -72,6 +72,10 @@ export default class GameSession {
 
   getCurrentRound() {
     return this.rounds.at(-1) ?? null
+  }
+
+  getUsedCategoryIds() { // this is a new method
+    return new Set(this.challenges.map((challenge) => challenge.categoryId)) // this grabs the category from every challenge played so far and puts them in a set so there are no repeats
   }
 
   completePlayerTurn(playerId, correctCount) {

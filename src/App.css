@@ -168,13 +168,26 @@ button {
   position: absolute;
   inset: 0 auto 0 0;
   width: 9px;
-  background: var(--category-colour);
+  background: var(--category-colour); 
   content: '';
 }
 
 .category-button:hover {
   transform: translateY(-4px);
   box-shadow: 0 14px 30px rgba(31, 42, 86, 0.14);
+}
+
+.category-button:disabled, /* this is the look for a category that got played already */
+.category-button--used {
+  cursor: not-allowed; /* this makes the mouse show it can not be clicked */
+  opacity: 0.45; /* this makes it look dim */
+  box-shadow: none;
+}
+
+.category-button:disabled:hover, /* this stops the hover lift from happening on a used button */
+.category-button--used:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .category-button:focus-visible,
@@ -227,6 +240,7 @@ button {
   background: var(--category-colour);
   content: '';
 }
+
 
 .timer {
   min-width: 94px;
@@ -488,6 +502,7 @@ button {
     padding: 30px 20px;
   }
 }
+
 /* === Additions for AnswerFeedbackView animation === */
 .feedback-animate {
   animation: feedbackPopIn 0.3s ease-out;
@@ -503,6 +518,7 @@ button {
     transform: scale(1) translateY(0);
   }
 }
+
 
 /* === Additions for ResultsView ranking + winner highlight === */
 .result-card--winner {
@@ -523,6 +539,7 @@ button {
 .result-card--winner .result-rank {
   color: #b8860b;
 }
+
 /* === Additions for QuizView correct/incorrect color feedback === */
 .answer-button.correct {
   background-color: #d4edda;
@@ -545,6 +562,7 @@ button {
 .answer-button.disabled {
   transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
+
 /* === Additions for auth (SignUp/Login/Dashboard) === */
 .auth-form {
   display: flex;
