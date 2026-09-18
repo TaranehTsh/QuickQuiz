@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+// developer-Hafsa
 export default function SignUpView({ onSignUp, onSwitchToLogin }) {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')

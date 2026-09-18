@@ -1,3 +1,4 @@
+// developer-Hafsa
 export default function DashboardView({ user, quizHistory, onStartQuiz, onLogOut }) {
   return (
     <div className="view-panel">

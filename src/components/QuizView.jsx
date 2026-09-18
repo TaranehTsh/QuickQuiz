@@ -6,9 +6,7 @@ export default function QuizView({
   question,
   timeLimit,
   onSubmitAnswer,
-  result, // NEW: the answer result ({ isCorrect, correctAnswer, submittedAnswer, timedOut })
-          // passed down once the player has answered, so buttons can turn green/red.
-          // null/undefined while the question is still unanswered.
+  result, // developer-Hafsa
 }) {
   const [timeRemaining, setTimeRemaining] = useState(timeLimit)
   const [locked, setLocked] = useState(false)
@@ -19,6 +17,7 @@ export default function QuizView({
       return undefined
     }
 
+    // developer-Tim
     if (timeRemaining <= 0) {
       if (!timedOutRef.current) {
         timedOutRef.current = true
@@ -43,9 +42,7 @@ export default function QuizView({
     onSubmitAnswer(answer, timeRemaining)
   }
 
-  // NEW: decides each button's color once `result` exists.
-  // Correct answer -> green. The wrong option the player picked -> red.
-  // Everything else just dims out.
+  // developer-Hafsa
   function getButtonClass(option) {
     if (!result) return 'answer-button'
     if (option === result.correctAnswer) return 'answer-button correct'
@@ -62,6 +59,7 @@ export default function QuizView({
     >
       <div className="quiz-meta">
         <span className="category-label">{category.name}</span>
+        {/* developer-Tim */}
         <span className={`timer ${timeRemaining <= 5 ? 'urgent' : ''}`}>
           {timeRemaining}s left
         </span>

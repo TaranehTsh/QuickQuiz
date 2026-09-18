@@ -1,3 +1,4 @@
+// developer-Hafsa
 export default function AnswerFeedbackView({
   activePlayerName,
   feedback,
@@ -7,9 +8,7 @@ export default function AnswerFeedbackView({
 
   return (
     <div className="feedback-view view-panel" role="status">
-      {/* NEW: "feedback-animate" class added — see CSS below for the
-          fade/scale-in keyframes. Covers the "Add visual feedback/
-          animations" checklist item, which wasn't done yet. */}
+      {/* developer-Hafsa */}
       <div className={`feedback-card feedback-animate ${isCorrect ? 'correct' : 'incorrect'}`}>
         <span className="feedback-icon" aria-hidden="true">
           {isCorrect ? '✓' : '×'}
@@ -21,6 +20,7 @@ export default function AnswerFeedbackView({
           {feedback.timedOut && <div>Time ran out.</div>}
           {!isCorrect && (
             <div>
+              {/* developer-Hafsa */}
               The correct answer is <strong>{feedback.correctAnswer}</strong>.
             </div>
           )}

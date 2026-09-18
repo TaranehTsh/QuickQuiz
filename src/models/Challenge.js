@@ -1,5 +1,6 @@
 import { QUESTIONS_PER_PLAYER } from '../gameConfig.js'
 
+// developer-Taraneh
 export default class Challenge {
   constructor(
     challengeNumber,

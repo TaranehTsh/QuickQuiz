@@ -1,10 +1,6 @@
+// developer-Hafsa
 const USERS_KEY = 'quickquiz_users'
 const CURRENT_USER_KEY = 'quickquiz_current_user'
-
-// NOTE: This is local-only persistence for a Sprint 1 class project —
-// not a real backend. Passwords are lightly obfuscated (not encrypted)
-// so they aren't sitting in plain text, but this is NOT secure enough
-// for a real production app with real users.
 
 export default class AuthService {
   getUsers() {

@@ -2,7 +2,7 @@ export const categoryData = [
   {
     categoryId: 'general',
     name: 'General Knowledge',
-    colour: '#377cf6',
+    colour: '#377cf6', // developer-Leon
     questions: [
       {
         questionId: 'general-1',
@@ -129,7 +129,7 @@ export const categoryData = [
   {
     categoryId: 'science',
     name: 'Science',
-    colour: '#16a673',
+    colour: '#16a673', // developer-Leon
     questions: [
       {
         questionId: 'science-1',
@@ -256,7 +256,7 @@ export const categoryData = [
   {
     categoryId: 'technology',
     name: 'Technology',
-    colour: '#7b52df',
+    colour: '#7b52df', // developer-Leon
     questions: [
       {
         questionId: 'technology-1',
@@ -423,7 +423,7 @@ export const categoryData = [
   {
     categoryId: 'sport',
     name: 'Sport',
-    colour: '#ef7b2d',
+    colour: '#ef7b2d', // developer-Leon
     questions: [
       {
         questionId: 'sport-1',

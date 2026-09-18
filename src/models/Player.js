@@ -5,7 +5,7 @@ export default class Player {
     }
 
     this.playerId = playerId
-    this.score = 0
+    this.score = 0 // developer-Will
     this.correctCount = 0
     this.incorrectCount = 0
     this.challengeWins = 0
@@ -25,6 +25,7 @@ export default class Player {
     this.challengeWins += 1
   }
 
+  // developer-Will
   getScore() {
     return this.score
   }

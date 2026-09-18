@@ -56,6 +56,7 @@ function createGame() {
 
 function App() {
   const [game, setGame] = useState(createGame)
+  // developer-Hafsa
   const [authService] = useState(() => new AuthService())
   const [currentUser, setCurrentUser] = useState(() => authService.getCurrentUser())
   const [view, setView] = useState(() =>
@@ -81,6 +82,7 @@ function App() {
 
   const inAuthFlow = view === 'login' || view === 'signup' || view === 'dashboard'
 
+  // developer-Hafsa
   function handleSignUp(details) {
     const user = authService.signUp(details)
     setCurrentUser(user)
@@ -103,6 +105,7 @@ function App() {
     setView('category')
   }
 
+  // developer-Taraneh
   async function handleCategorySelect(categoryId) {
     const categoryChoice = game.turnController.chooseCategory(
       gameSession.activePlayerId,
@@ -136,6 +139,7 @@ function App() {
 
     setFeedback(answerResult)
 
+    // developer-Hafsa
     window.setTimeout(() => {
       setView('feedback')
     }, 1200)
@@ -156,6 +160,7 @@ function App() {
     setFeedback(null)
 
     if (!outcome.bothPlayersFinished) {
+      // developer-Taraneh
       setView('handoff')
       return
     }
@@ -176,6 +181,7 @@ function App() {
       const results = game.resultsService.getFinalResults()
       setFinalResults(results)
 
+      // developer-Hafsa
       if (currentUser) {
         const me = results.players.find((p) => p.playerId === 'player-1')
         authService.recordQuizResult(currentUser.email, {
@@ -189,6 +195,7 @@ function App() {
       return
     }
 
+    // developer-Taraneh
     game.turnController.startNextChooserTurn()
     setCurrentQuestion(null)
     setSelectedCategory(null)
@@ -226,6 +233,7 @@ function App() {
         )}
       </header>
 
+      {/* developer-Will */}
       {!inAuthFlow && (
         <section className="score-strip" aria-label="Current scores">
           {gameSession.players.map((player) => (
@@ -245,6 +253,7 @@ function App() {
       )}
 
       <section className="game-stage">
+        {/* developer-Hafsa */}
         {view === 'login' && (
           <LoginView onLogIn={handleLogIn} onSwitchToSignUp={() => setView('signup')} />
         )}
@@ -262,6 +271,7 @@ function App() {
           />
         )}
 
+        {/* developer-Leon / developer-Taraneh */}
         {view === 'category' && (
           <CategorySelectionView
             activePlayerName={playerNames[activePlayer.playerId]}
@@ -283,6 +293,7 @@ function App() {
           </div>
         )}
 
+        {/* developer-Tim */}
         {view === 'quiz' && currentQuestion && selectedCategory && (
           <QuizView
             key={`${gameSession.activePlayerId}-${currentQuestion.questionId}`}
@@ -295,6 +306,7 @@ function App() {
           />
         )}
 
+        {/* developer-Hafsa */}
         {view === 'feedback' && feedback && (
           <AnswerFeedbackView
             activePlayerName={playerNames[activePlayer.playerId]}
@@ -354,6 +366,7 @@ function App() {
           </div>
         )}
 
+        {/* developer-Will / developer-Tim */}
         {view === 'results' && finalResults && (
           <ResultsView
             results={finalResults}

@@ -19,10 +19,12 @@ export default class Question {
     this.categoryId = categoryId
   }
 
+  // developer-Hafsa
   checkAnswer(answer) {
     return String(answer).trim().toLowerCase() === this.correctAnswer.toLowerCase()
   }
 
+  // developer-Hafsa
   getCorrectAnswer() {
     return this.correctAnswer
   }

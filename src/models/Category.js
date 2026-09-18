@@ -6,7 +6,7 @@ export default class Category {
 
     this.categoryId = categoryId
     this.name = name
-    this.colour = colour
+    this.colour = colour // developer-Leon
     this.questions = [...questions]
   }
 
@@ -18,6 +18,7 @@ export default class Category {
     this.questions.push(...questions)
   }
 
+  // developer-Leon
   getColour() {
     return this.colour
   }

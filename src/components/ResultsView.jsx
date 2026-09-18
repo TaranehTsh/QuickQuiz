@@ -1,11 +1,9 @@
+// developer-Will
 export default function ResultsView({ results, playerNames, onRestart }) {
   const summary = results.isTie
     ? 'The quiz finished in a tie.'
     : `${playerNames[results.winnerPlayerId]} wins the quiz!`
 
-  // NEW: rank players by score (highest first) before rendering,
-  // instead of displaying them in whatever order gameSession.players
-  // happened to store them in. Covers the "Rank players" checklist item.
   const rankedPlayers = [...results.players].sort((a, b) => b.score - a.score)
 
   return (
@@ -23,8 +21,7 @@ export default function ResultsView({ results, playerNames, onRestart }) {
           const isWinner = player.playerId === results.winnerPlayerId
 
           return (
-            // NEW: winner class + rank badge, so the winning card is
-            // visually distinct instead of looking identical to the loser's.
+            // developer-Will
             <article
               className={`result-card ${isWinner ? 'result-card--winner' : ''}`}
               key={player.playerId}
@@ -33,6 +30,7 @@ export default function ResultsView({ results, playerNames, onRestart }) {
               <h3>
                 {playerNames[player.playerId]} {isWinner && <span aria-label="Winner">🏆</span>}
               </h3>
+              {/* developer-Will */}
               <div className="result-score">
                 {player.score} <small>points</small>
               </div>
@@ -50,6 +48,7 @@ export default function ResultsView({ results, playerNames, onRestart }) {
                   <dt>Accuracy</dt>
                   <dd>{player.accuracy}%</dd>
                 </div>
+                {/* developer-Tim */}
                 <div className="stat-row">
                   <dt>Strength</dt>
                   <dd>{player.strength}</dd>

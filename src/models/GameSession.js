@@ -13,7 +13,7 @@ export default class GameSession {
     this.sessionId = sessionId
     this.players = [...players]
     this.activePlayerId = players[0].playerId
-    this.categoryChooserId = players[0].playerId
+    this.categoryChooserId = players[0].playerId // developer-Taraneh
     this.selectedCategoryId = null
     this.roundState = 'category-selection'
     this.rounds = []
@@ -45,6 +45,7 @@ export default class GameSession {
     return opponent.playerId
   }
 
+  // developer-Taraneh
   selectCategory(categoryId, playerId = this.activePlayerId) {
     if (playerId !== this.categoryChooserId) {
       throw new Error('Only the category chooser can select a category.')
@@ -112,6 +113,7 @@ export default class GameSession {
     }
   }
 
+  // developer-Taraneh
   rotateChooser() {
     this.categoryChooserId = this.getOpponentId(this.categoryChooserId)
     this.activePlayerId = this.categoryChooserId
@@ -129,6 +131,7 @@ export default class GameSession {
     )
   }
 
+  // developer-Taraneh
   alternateActivePlayer() {
     const currentIndex = this.players.findIndex(
       (player) => player.playerId === this.activePlayerId,

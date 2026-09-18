@@ -15,7 +15,7 @@ export default class QuizRound {
     this.roundNumber = roundNumber
     this.selectedCategoryId = selectedCategoryId
     this.playerId = playerId
-    this.timeLimitSeconds = timeLimitSeconds
+    this.timeLimitSeconds = timeLimitSeconds // developer-Tim
     this.questions = [...questions]
     this.currentQuestionIndex = -1
     this.answerRecords = []
@@ -46,7 +46,7 @@ export default class QuizRound {
       question.questionId,
       answer,
       question.checkAnswer(answer),
-      timeRemaining,
+      timeRemaining, // developer-Tim
     )
 
     this.answerRecords.push(record)

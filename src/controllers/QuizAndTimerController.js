@@ -12,9 +12,10 @@ export default class QuizAndTimerController {
     this.gameSession = gameSession
     this.repository = repository
     this.playerResults = playerResults
-    this.timeLimitSeconds = timeLimitSeconds
+    this.timeLimitSeconds = timeLimitSeconds // developer-Tim
   }
 
+  // developer-Taraneh
   startChooserTurn(categoryId, chooserQuestions, opponentQuestions) {
     const chooserId = this.gameSession.categoryChooserId
     const challenge = new Challenge(
@@ -82,6 +83,7 @@ export default class QuizAndTimerController {
     )
   }
 
+  // developer-Hafsa
   checkAnswer(playerId, answer, timeRemaining) {
     if (playerId !== this.gameSession.activePlayerId) {
       throw new Error('The answer must come from the active player.')
@@ -110,7 +112,7 @@ export default class QuizAndTimerController {
       isCorrect: validation.isCorrect,
       correctAnswer: validation.correctAnswer,
       submittedAnswer: answer || null,
-      timedOut: timeRemaining === 0,
+      timedOut: timeRemaining === 0, // developer-Tim
     }
   }
 

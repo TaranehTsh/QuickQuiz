@@ -1,6 +1,7 @@
 import Category from '../models/Category.js'
 import Question from '../models/Question.js'
 
+// developer-Will
 function shuffle(items) {
   const copy = [...items]
 
@@ -29,7 +30,7 @@ export default class CategoryQuestionRepository {
       return new Category(
         category.categoryId,
         category.name,
-        category.colour,
+        category.colour, // developer-Leon
         questions,
       )
     })
