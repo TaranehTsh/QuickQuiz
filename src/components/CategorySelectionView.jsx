@@ -1,3 +1,5 @@
+// developer-Leon
+// coloured category buttons for the player whose turn it is
 export default function CategorySelectionView({
   activePlayerName,
   categories,
@@ -6,7 +8,7 @@ export default function CategorySelectionView({
   return (
     <div className="view-panel">
       <div className="view-heading">
-        <p className="view-kicker">{activePlayerName}&apos;s turn</p>
+        <p className="view-kicker">{activePlayerName}&apos;s turn</p> {/* developer-Taraneh */}
         <h2>Choose a category</h2>
         <p className="view-description">
           Each colour represents a different category. Choose one to begin the
@@ -20,7 +22,7 @@ export default function CategorySelectionView({
             className="category-button"
             key={category.categoryId}
             onClick={() => onSelectCategory(category.categoryId)}
-            style={{ '--category-colour': category.getColour() }}
+            style={{ '--category-colour': category.getColour() }} // developer-Leon
             type="button"
           >
             <span className="category-dot" aria-hidden="true" />

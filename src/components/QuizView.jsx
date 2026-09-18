@@ -6,9 +6,10 @@ export default function QuizView({
   question,
   timeLimit,
   onSubmitAnswer,
+  result, // developer-Hafsa
 }) {
   const [timeRemaining, setTimeRemaining] = useState(timeLimit)
-  const [locked, setLocked] = useState(false)
+  const [locked, setLocked] = useState(false) // stop extra clicks after answering
   const timedOutRef = useRef(false)
 
   useEffect(() => {
@@ -16,10 +17,11 @@ export default function QuizView({
       return undefined
     }
 
+    // developer-Tim
     if (timeRemaining <= 0) {
       if (!timedOutRef.current) {
         timedOutRef.current = true
-        onSubmitAnswer('', 0)
+        onSubmitAnswer('', 0) // treat as a missed answer
       }
       return undefined
     }
@@ -40,6 +42,15 @@ export default function QuizView({
     onSubmitAnswer(answer, timeRemaining)
   }
 
+  // developer-Hafsa
+  // green = correct, red = the one they picked if wrong
+  function getButtonClass(option) {
+    if (!result) return 'answer-button'
+    if (option === result.correctAnswer) return 'answer-button correct'
+    if (option === result.submittedAnswer) return 'answer-button incorrect'
+    return 'answer-button disabled'
+  }
+
   const progress = (timeRemaining / timeLimit) * 100
 
   return (
@@ -49,6 +60,7 @@ export default function QuizView({
     >
       <div className="quiz-meta">
         <span className="category-label">{category.name}</span>
+        {/* developer-Tim */}
         <span className={`timer ${timeRemaining <= 5 ? 'urgent' : ''}`}>
           {timeRemaining}s left
         </span>
@@ -74,7 +86,7 @@ export default function QuizView({
       <div className="answer-grid">
         {question.options.map((option) => (
           <button
-            className="answer-button"
+            className={getButtonClass(option)}
             disabled={locked}
             key={option}
             onClick={() => handleAnswer(option)}

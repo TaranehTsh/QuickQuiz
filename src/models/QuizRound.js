@@ -1,5 +1,6 @@
 import AnswerRecord from './AnswerRecord.js'
 
+// one player's 3 questions in the current set
 export default class QuizRound {
   constructor(
     roundNumber,
@@ -15,15 +16,15 @@ export default class QuizRound {
     this.roundNumber = roundNumber
     this.selectedCategoryId = selectedCategoryId
     this.playerId = playerId
-    this.timeLimitSeconds = timeLimitSeconds
+    this.timeLimitSeconds = timeLimitSeconds // developer-Tim
     this.questions = [...questions]
-    this.currentQuestionIndex = -1
+    this.currentQuestionIndex = -1 // nothing started yet
     this.answerRecords = []
   }
 
   startQuestion() {
     if (this.currentQuestionIndex + 1 >= this.questions.length) {
-      return null
+      return null // no more questions for this player
     }
 
     this.currentQuestionIndex += 1
@@ -46,7 +47,7 @@ export default class QuizRound {
       question.questionId,
       answer,
       question.checkAnswer(answer),
-      timeRemaining,
+      timeRemaining, // developer-Tim
     )
 
     this.answerRecords.push(record)

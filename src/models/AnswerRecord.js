@@ -1,3 +1,4 @@
+// what the player answered, and whether it was right
 export default class AnswerRecord {
   constructor(
     playerId,
@@ -9,8 +10,8 @@ export default class AnswerRecord {
     this.playerId = playerId
     this.questionId = questionId
     this.submittedAnswer = submittedAnswer
-    this.isCorrect = Boolean(isCorrect)
-    this.timeRemaining = Math.max(0, Number(timeRemaining) || 0)
+    this.isCorrect = Boolean(isCorrect) // developer-Hafsa
+    this.timeRemaining = Math.max(0, Number(timeRemaining) || 0) // developer-Tim
   }
 
   getResult() {

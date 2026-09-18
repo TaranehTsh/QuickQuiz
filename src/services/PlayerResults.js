@@ -1,3 +1,4 @@
+// keeps every answer so we can work out accuracy / best & worst category
 export default class PlayerResults {
   constructor() {
     this.answerRecords = []
@@ -11,6 +12,8 @@ export default class PlayerResults {
     return this.answerRecords.filter((record) => record.playerId === playerId)
   }
 
+  // developer-Tim
+  // strongest = best accuracy, weakest = worst
   getStatistics(playerId, repository) {
     const records = this.getRecordsForPlayer(playerId)
     const correctCount = records.filter((record) => record.getResult()).length
@@ -51,7 +54,7 @@ export default class PlayerResults {
         records.length === 0
           ? 0
           : Math.round((correctCount / records.length) * 100),
-      strength: strongest?.name ?? 'No data',
+      strength: strongest?.name ?? 'No data', // developer-Tim
       weakness: weakest?.name ?? 'No data',
       categoryStatistics,
     }

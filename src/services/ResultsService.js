@@ -5,21 +5,24 @@ export default class ResultsService {
     this.repository = repository
   }
 
+  // end-of-quiz scores, winner, and stats
   getFinalResults() {
+    // developer-Will
     const players = this.gameSession.players.map((player) => ({
       playerId: player.playerId,
       score: player.getScore(),
       challengeWins: player.challengeWins,
-      ...this.playerResults.getStatistics(player.playerId, this.repository),
+      ...this.playerResults.getStatistics(player.playerId, this.repository), // developer-Tim
     }))
 
+    // highest score wins; same score = tie
     const highestScore = Math.max(...players.map((player) => player.score))
     const winners = players.filter((player) => player.score === highestScore)
 
     return {
       players,
       isTie: winners.length > 1,
-      winnerPlayerId: winners.length === 1 ? winners[0].playerId : null,
+      winnerPlayerId: winners.length === 1 ? winners[0].playerId : null, // developer-Will
       challengeResults: this.gameSession.challenges.map((challenge) => ({
         challengeNumber: challenge.challengeNumber,
         categoryId: challenge.categoryId,

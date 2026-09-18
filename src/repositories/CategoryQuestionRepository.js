@@ -1,6 +1,7 @@
 import Category from '../models/Category.js'
 import Question from '../models/Question.js'
 
+// developer-Will
 function shuffle(items) {
   const copy = [...items]
 
@@ -29,7 +30,7 @@ export default class CategoryQuestionRepository {
       return new Category(
         category.categoryId,
         category.name,
-        category.colour,
+        category.colour, // developer-Leon
         questions,
       )
     })
@@ -66,6 +67,7 @@ export default class CategoryQuestionRepository {
     const unusedQuestions = allQuestions.filter(
       (question) => !usedIds.has(question.questionId),
     )
+    // prefer unused questions so we don't repeat if we can help it
     const pool =
       unusedQuestions.length >= count ? unusedQuestions : allQuestions
     const selected = shuffle(pool).slice(0, count)
@@ -83,6 +85,7 @@ export default class CategoryQuestionRepository {
     return selected
   }
 
+  // add API questions into this category so we can check answers later
   ingestQuestions(categoryId, rawQuestions) {
     const category = this.getCategory(categoryId)
     const questions = rawQuestions.map(

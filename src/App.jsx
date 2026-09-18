@@ -4,6 +4,9 @@ import AnswerFeedbackView from './components/AnswerFeedbackView.jsx'
 import CategorySelectionView from './components/CategorySelectionView.jsx'
 import QuizView from './components/QuizView.jsx'
 import ResultsView from './components/ResultsView.jsx'
+import SignUpView from './components/SignUpView.jsx'
+import LoginView from './components/LoginView.jsx'
+import DashboardView from './components/DashboardView.jsx'
 import QuizAndTimerController from './controllers/QuizAndTimerController.js'
 import TurnAndCategoryController from './controllers/TurnAndCategoryController.js'
 import { categoryData } from './data/questions.js'
@@ -19,12 +22,14 @@ import CategoryQuestionRepository from './repositories/CategoryQuestionRepositor
 import QuizApiQuestionService from './services/QuizApiQuestionService.js'
 import PlayerResults from './services/PlayerResults.js'
 import ResultsService from './services/ResultsService.js'
+import AuthService from './services/AuthService.js'
 
 const playerNames = {
   'player-1': 'Player 1',
   'player-2': 'Player 2',
 }
 
+// builds a fresh 2-player game
 function createGame() {
   const players = [new Player('player-1'), new Player('player-2')]
   const gameSession = new GameSession(`session-${Date.now()}`, players)
@@ -52,16 +57,24 @@ function createGame() {
 
 function App() {
   const [game, setGame] = useState(createGame)
-  const [view, setView] = useState('category')
+  // developer-Hafsa
+  const [authService] = useState(() => new AuthService())
+  const [currentUser, setCurrentUser] = useState(() => authService.getCurrentUser())
+  const [view, setView] = useState(() =>
+    authService.getCurrentUser() ? 'dashboard' : 'login',
+  )
   const [currentQuestion, setCurrentQuestion] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [feedback, setFeedback] = useState(null)
   const [challengeOutcome, setChallengeOutcome] = useState(null)
   const [finalResults, setFinalResults] = useState(null)
+  // developer-Taraneh
+  const [flaggedQuestionIds, setFlaggedQuestionIds] = useState([])
 
   const { gameSession } = game
   const activePlayer = gameSession.getActivePlayer()
   const currentRound = gameSession.getCurrentRound()
+  // header: which set and which question (1/3) we are on
   const displayedSet = Math.min(
     Math.max(gameSession.challenges.length, 1),
     CHALLENGES_PER_GAME,
@@ -71,6 +84,33 @@ function App() {
       ? currentRound.currentQuestionIndex + 1
       : 1
 
+  const inAuthFlow = view === 'login' || view === 'signup' || view === 'dashboard'
+
+  // developer-Hafsa
+  function handleSignUp(details) {
+    const user = authService.signUp(details)
+    setCurrentUser(user)
+    setView('dashboard')
+  }
+
+  function handleLogIn(details) {
+    const user = authService.logIn(details)
+    setCurrentUser(user)
+    setView('dashboard')
+  }
+
+  function handleLogOut() {
+    authService.logOut()
+    setCurrentUser(null)
+    setView('login')
+  }
+
+  function handleStartQuizFromDashboard() {
+    setView('category')
+  }
+
+  // developer-Taraneh
+  // player picks a category, then we load 6 questions (3 each)
   async function handleCategorySelect(categoryId) {
     const categoryChoice = game.turnController.chooseCategory(
       gameSession.activePlayerId,
@@ -103,12 +143,17 @@ function App() {
     )
 
     setFeedback(answerResult)
-    setView('feedback')
+
+    // developer-Hafsa
+    window.setTimeout(() => {
+      setView('feedback')
+    }, 1200)
   }
 
   function handleContinue() {
     const nextQuestion = game.quizController.continueIfMoreQuestions()
 
+    // still on this player's 3 questions
     if (nextQuestion) {
       setCurrentQuestion(nextQuestion)
       setFeedback(null)
@@ -121,6 +166,8 @@ function App() {
     setFeedback(null)
 
     if (!outcome.bothPlayersFinished) {
+      // developer-Taraneh
+      // other player still needs to answer their 3
       setView('handoff')
       return
     }
@@ -129,6 +176,7 @@ function App() {
   }
 
   function handleHandoffContinue() {
+    // start the second player's 3 questions (same category, different set)
     const question = game.quizController.startOpponentTurn()
     setCurrentQuestion(question)
     setFeedback(null)
@@ -136,13 +184,27 @@ function App() {
   }
 
   function handleChallengeContinue() {
+    // after 2 sets, show final results; otherwise the other player picks
     if (game.quizController.isQuizComplete(CHALLENGES_PER_GAME)) {
       gameSession.finishRound()
-      setFinalResults(game.resultsService.getFinalResults())
+      const results = game.resultsService.getFinalResults()
+      setFinalResults(results)
+
+      // developer-Hafsa
+      if (currentUser) {
+        const me = results.players.find((p) => p.playerId === 'player-1')
+        authService.recordQuizResult(currentUser.email, {
+          score: me?.score ?? 0,
+          won: results.winnerPlayerId === 'player-1',
+          isTie: results.isTie,
+        })
+      }
+
       setView('results')
       return
     }
 
+    // developer-Taraneh
     game.turnController.startNextChooserTurn()
     setCurrentQuestion(null)
     setSelectedCategory(null)
@@ -158,7 +220,17 @@ function App() {
     setFeedback(null)
     setChallengeOutcome(null)
     setFinalResults(null)
-    setView('category')
+    setFlaggedQuestionIds([])
+    setView('dashboard')
+  }
+
+  // developer-Taraneh
+  function handleFlagQuestion(questionId) {
+    if (!questionId || flaggedQuestionIds.includes(questionId)) {
+      return
+    }
+
+    setFlaggedQuestionIds([...flaggedQuestionIds, questionId])
   }
 
   return (
@@ -169,32 +241,56 @@ function App() {
           <h1>QuickQuiz</h1>
         </div>
 
-        <div
-          className="round-pill"
-          aria-label={`Set ${displayedSet} of ${CHALLENGES_PER_GAME}, question ${displayedQuestion} of ${QUESTIONS_PER_PLAYER}`}
-        >
-          Set {displayedSet}/{CHALLENGES_PER_GAME} · Q {displayedQuestion}/
-          {QUESTIONS_PER_PLAYER}
-        </div>
+        {!inAuthFlow && (
+          <div
+            className="round-pill"
+            aria-label={`Set ${displayedSet} of ${CHALLENGES_PER_GAME}, question ${displayedQuestion} of ${QUESTIONS_PER_PLAYER}`}
+          >
+            Set {displayedSet}/{CHALLENGES_PER_GAME} · Q {displayedQuestion}/
+            {QUESTIONS_PER_PLAYER}
+          </div>
+        )}
       </header>
 
-      <section className="score-strip" aria-label="Current scores">
-        {gameSession.players.map((player) => (
-          <article
-            className={`player-score ${
-              player.playerId === gameSession.activePlayerId && view !== 'results'
-                ? 'active'
-                : ''
-            }`}
-            key={player.playerId}
-          >
-            <span>{playerNames[player.playerId]}</span>
-            <strong>{player.getScore()}</strong>
-          </article>
-        ))}
-      </section>
+      {/* developer-Will */}
+      {!inAuthFlow && (
+        <section className="score-strip" aria-label="Current scores">
+          {gameSession.players.map((player) => (
+            <article
+              className={`player-score ${
+                player.playerId === gameSession.activePlayerId && view !== 'results'
+                  ? 'active'
+                  : ''
+              }`}
+              key={player.playerId}
+            >
+              <span>{playerNames[player.playerId]}</span>
+              <strong>{player.getScore()}</strong>
+            </article>
+          ))}
+        </section>
+      )}
 
       <section className="game-stage">
+        {/* developer-Hafsa */}
+        {view === 'login' && (
+          <LoginView onLogIn={handleLogIn} onSwitchToSignUp={() => setView('signup')} />
+        )}
+
+        {view === 'signup' && (
+          <SignUpView onSignUp={handleSignUp} onSwitchToLogin={() => setView('login')} />
+        )}
+
+        {view === 'dashboard' && currentUser && (
+          <DashboardView
+            user={currentUser}
+            quizHistory={authService.getQuizHistory(currentUser.email)}
+            onStartQuiz={handleStartQuizFromDashboard}
+            onLogOut={handleLogOut}
+          />
+        )}
+
+        {/* developer-Leon / developer-Taraneh */}
         {view === 'category' && (
           <CategorySelectionView
             activePlayerName={playerNames[activePlayer.playerId]}
@@ -216,25 +312,36 @@ function App() {
           </div>
         )}
 
+        {/* developer-Tim */}
         {view === 'quiz' && currentQuestion && selectedCategory && (
           <QuizView
+            // remount so the timer resets for each question
             key={`${gameSession.activePlayerId}-${currentQuestion.questionId}`}
             activePlayerName={playerNames[activePlayer.playerId]}
             category={selectedCategory}
             question={currentQuestion}
             timeLimit={QUESTION_TIME_LIMIT}
             onSubmitAnswer={handleAnswerSubmit}
+            result={feedback}
           />
         )}
 
+        {/* developer-Hafsa */}
         {view === 'feedback' && feedback && (
           <AnswerFeedbackView
             activePlayerName={playerNames[activePlayer.playerId]}
+            alreadyFlagged={flaggedQuestionIds.includes(
+              feedback.answerRecord?.questionId,
+            )}
             feedback={feedback}
             onContinue={handleContinue}
+            onFlagQuestion={() =>
+              handleFlagQuestion(feedback.answerRecord?.questionId)
+            }
           />
         )}
 
+        {/* pass the device to the other player */}
         {view === 'handoff' && challengeOutcome && (
           <div className="view-panel">
             <p className="view-kicker">Pass the device</p>
@@ -258,6 +365,7 @@ function App() {
           </div>
         )}
 
+        {/* who won this category set */}
         {view === 'challenge-result' && challengeOutcome && (
           <div className="view-panel">
             <p className="view-kicker">Set {displayedSet} result</p>
@@ -286,6 +394,7 @@ function App() {
           </div>
         )}
 
+        {/* developer-Will / developer-Tim */}
         {view === 'results' && finalResults && (
           <ResultsView
             results={finalResults}
