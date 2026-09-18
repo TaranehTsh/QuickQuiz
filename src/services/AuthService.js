@@ -1,9 +1,39 @@
-// developer-Hafsa
 const USERS_KEY = 'quickquiz_users'
 const CURRENT_USER_KEY = 'quickquiz_current_user'
 
-// localStorage accounts (class project, not a real backend)
+// A shared demo account so any teammate or marker can log in immediately
+// without signing up first, since each browser's localStorage starts empty.
+const DEFAULT_ACCOUNT = {
+  email: 'demo@quickquiz.com',
+  username: 'Demo Player',
+  password: 'demo123',
+}
+
+// NOTE: This is local-only persistence for a Sprint 1 class project —
+// not a real backend. Passwords are lightly obfuscated (not encrypted)
+// so they aren't sitting in plain text, but this is NOT secure enough
+// for a real production app with real users.
+
 export default class AuthService {
+  constructor() {
+    this.ensureDefaultAccount()
+  }
+
+  ensureDefaultAccount() {
+    const users = this.getUsers()
+    const exists = users.some((user) => user.email === DEFAULT_ACCOUNT.email)
+
+    if (!exists) {
+      users.push({
+        email: DEFAULT_ACCOUNT.email,
+        username: DEFAULT_ACCOUNT.username,
+        password: this.obfuscate(DEFAULT_ACCOUNT.password),
+        quizHistory: [],
+      })
+      this.saveUsers(users)
+    }
+  }
+
   getUsers() {
     const raw = localStorage.getItem(USERS_KEY)
     return raw ? JSON.parse(raw) : []
@@ -14,7 +44,7 @@ export default class AuthService {
   }
 
   obfuscate(password) {
-    return btoa(password) // not real encryption, just not stored as plain text
+    return btoa(password)
   }
 
   signUp({ username, email, password }) {
@@ -76,7 +106,6 @@ export default class AuthService {
     localStorage.removeItem(CURRENT_USER_KEY)
   }
 
-  // save this quiz onto the user's history
   recordQuizResult(email, resultSummary) {
     const users = this.getUsers()
     const user = users.find((candidate) => candidate.email === email)
