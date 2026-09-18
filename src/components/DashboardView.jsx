@@ -1,4 +1,5 @@
 // developer-Hafsa
+// logged-in home screen and past quiz scores
 export default function DashboardView({ user, quizHistory, onStartQuiz, onLogOut }) {
   return (
     <div className="view-panel">

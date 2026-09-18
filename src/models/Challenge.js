@@ -1,6 +1,7 @@
 import { QUESTIONS_PER_PLAYER } from '../gameConfig.js'
 
 // developer-Taraneh
+// one category set: each player gets 3 different questions
 export default class Challenge {
   constructor(
     challengeNumber,
@@ -53,6 +54,7 @@ export default class Challenge {
     throw new Error(`Player ${playerId} is not part of this challenge.`)
   }
 
+  // how many they got right out of 3
   recordPlayerResult(playerId, correctCount) {
     if (!Object.hasOwn(this.playerScores, playerId)) {
       throw new Error(`Player ${playerId} is not part of this challenge.`)
@@ -82,7 +84,7 @@ export default class Challenge {
     const opponentScore = this.playerScores[this.opponentPlayerId]
 
     if (chooserScore === opponentScore) {
-      return null
+      return null // tie
     }
 
     return chooserScore > opponentScore

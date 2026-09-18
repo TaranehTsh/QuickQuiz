@@ -69,6 +69,7 @@ export default class QuizApiQuestionService {
         apiQuestions.slice(0, this.questionsPerCategorySet),
       )
     } catch {
+      // API failed — use the local question bank instead
       return this.repository.getQuestionSet(
         category.categoryId,
         this.questionsPerCategorySet,

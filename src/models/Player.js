@@ -1,3 +1,4 @@
+// one player's score for the current quiz
 export default class Player {
   constructor(playerId) {
     if (!playerId) {
@@ -13,7 +14,7 @@ export default class Player {
 
   recordAnswer(isCorrect) {
     if (isCorrect) {
-      this.score += 1
+      this.score += 1 // +1 point
       this.correctCount += 1
       return
     }

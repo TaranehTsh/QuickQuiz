@@ -1,4 +1,5 @@
 // developer-Taraneh
+// category pick + whose turn it is
 export default class TurnAndCategoryController {
   constructor(gameSession, repository) {
     this.gameSession = gameSession

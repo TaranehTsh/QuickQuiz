@@ -1,5 +1,6 @@
 import Challenge from './Challenge.js'
 
+// holds the current 2-player game: whose turn, category, scores
 export default class GameSession {
   constructor(sessionId, players) {
     if (!sessionId) {
@@ -12,12 +13,12 @@ export default class GameSession {
 
     this.sessionId = sessionId
     this.players = [...players]
-    this.activePlayerId = players[0].playerId
+    this.activePlayerId = players[0].playerId // who is answering right now
     this.categoryChooserId = players[0].playerId // developer-Taraneh
     this.selectedCategoryId = null
     this.roundState = 'category-selection'
     this.rounds = []
-    this.challenges = []
+    this.challenges = [] // each challenge = one category, 3 questions each
     this.currentChallenge = null
   }
 
@@ -46,6 +47,7 @@ export default class GameSession {
   }
 
   // developer-Taraneh
+  // only the chooser can pick the category for this set
   selectCategory(categoryId, playerId = this.activePlayerId) {
     if (playerId !== this.categoryChooserId) {
       throw new Error('Only the category chooser can select a category.')
@@ -75,6 +77,7 @@ export default class GameSession {
     return this.rounds.at(-1) ?? null
   }
 
+  // save this player's 3/3, then either pass to the other player or end the set
   completePlayerTurn(playerId, correctCount) {
     const challenge = this.currentChallenge
 
@@ -114,6 +117,7 @@ export default class GameSession {
   }
 
   // developer-Taraneh
+  // other player picks the next category
   rotateChooser() {
     this.categoryChooserId = this.getOpponentId(this.categoryChooserId)
     this.activePlayerId = this.categoryChooserId
@@ -132,6 +136,7 @@ export default class GameSession {
   }
 
   // developer-Taraneh
+  // swap who is answering (also clears the category)
   alternateActivePlayer() {
     const currentIndex = this.players.findIndex(
       (player) => player.playerId === this.activePlayerId,

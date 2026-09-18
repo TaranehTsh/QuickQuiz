@@ -9,7 +9,7 @@ export default function QuizView({
   result, // developer-Hafsa
 }) {
   const [timeRemaining, setTimeRemaining] = useState(timeLimit)
-  const [locked, setLocked] = useState(false)
+  const [locked, setLocked] = useState(false) // stop extra clicks after answering
   const timedOutRef = useRef(false)
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function QuizView({
     if (timeRemaining <= 0) {
       if (!timedOutRef.current) {
         timedOutRef.current = true
-        onSubmitAnswer('', 0)
+        onSubmitAnswer('', 0) // treat as a missed answer
       }
       return undefined
     }
@@ -43,6 +43,7 @@ export default function QuizView({
   }
 
   // developer-Hafsa
+  // green = correct, red = the one they picked if wrong
   function getButtonClass(option) {
     if (!result) return 'answer-button'
     if (option === result.correctAnswer) return 'answer-button correct'

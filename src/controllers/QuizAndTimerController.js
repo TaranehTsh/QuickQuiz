@@ -2,6 +2,7 @@ import { CHALLENGES_PER_GAME } from '../gameConfig.js'
 import Challenge from '../models/Challenge.js'
 import QuizRound from '../models/QuizRound.js'
 
+// starts questions, checks answers, and keeps the timer limit
 export default class QuizAndTimerController {
   constructor(
     gameSession,
@@ -16,6 +17,7 @@ export default class QuizAndTimerController {
   }
 
   // developer-Taraneh
+  // first player in the set answers their 3
   startChooserTurn(categoryId, chooserQuestions, opponentQuestions) {
     const chooserId = this.gameSession.categoryChooserId
     const challenge = new Challenge(
@@ -31,6 +33,7 @@ export default class QuizAndTimerController {
     return this.startPlayerQuestionSet(chooserId, chooserQuestions)
   }
 
+  // second player, same category, different 3 questions
   startOpponentTurn() {
     const challenge = this.gameSession.currentChallenge
 
@@ -59,6 +62,7 @@ export default class QuizAndTimerController {
     return round.startQuestion()
   }
 
+  // next question for the same player, or null if their 3 are done
   continueIfMoreQuestions() {
     const round = this.gameSession.getCurrentRound()
 
@@ -84,6 +88,7 @@ export default class QuizAndTimerController {
   }
 
   // developer-Hafsa
+  // mark right/wrong and keep the correct answer for feedback
   checkAnswer(playerId, answer, timeRemaining) {
     if (playerId !== this.gameSession.activePlayerId) {
       throw new Error('The answer must come from the active player.')

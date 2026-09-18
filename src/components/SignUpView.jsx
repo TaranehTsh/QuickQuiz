@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 // developer-Hafsa
+// create an account so quiz history can be saved
 export default function SignUpView({ onSignUp, onSwitchToLogin }) {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')

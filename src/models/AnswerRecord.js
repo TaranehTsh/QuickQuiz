@@ -1,3 +1,4 @@
+// what the player answered, and whether it was right
 export default class AnswerRecord {
   constructor(
     playerId,

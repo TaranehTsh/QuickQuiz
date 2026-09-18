@@ -2,6 +2,7 @@
 const USERS_KEY = 'quickquiz_users'
 const CURRENT_USER_KEY = 'quickquiz_current_user'
 
+// localStorage accounts (class project, not a real backend)
 export default class AuthService {
   getUsers() {
     const raw = localStorage.getItem(USERS_KEY)
@@ -13,7 +14,7 @@ export default class AuthService {
   }
 
   obfuscate(password) {
-    return btoa(password)
+    return btoa(password) // not real encryption, just not stored as plain text
   }
 
   signUp({ username, email, password }) {
@@ -75,6 +76,7 @@ export default class AuthService {
     localStorage.removeItem(CURRENT_USER_KEY)
   }
 
+  // save this quiz onto the user's history
   recordQuizResult(email, resultSummary) {
     const users = this.getUsers()
     const user = users.find((candidate) => candidate.email === email)

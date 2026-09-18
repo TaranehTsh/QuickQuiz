@@ -7,7 +7,7 @@ export default function LoginView({ onLogIn, onSwitchToSignUp }) {
   const [error, setError] = useState(null)
 
   function handleSubmit(event) {
-    event.preventDefault()
+    event.preventDefault() // stay on this page, don't reload
 
     try {
       onLogIn({ email, password })

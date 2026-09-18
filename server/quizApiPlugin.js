@@ -1,3 +1,4 @@
+// maps our category ids to Open Trivia Database category numbers
 const OPEN_TDB_CATEGORIES = {
   general: 9,
   science: 17,
@@ -33,6 +34,7 @@ function readJsonBody(req) {
   })
 }
 
+// API text sometimes has HTML entities / encoding
 function decodeValue(value) {
   const withEntities = String(value)
     .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
@@ -109,6 +111,7 @@ async function fetchQuizQuestions(categoryId, count) {
   return normalizeQuestions(payload.results, categoryId)
 }
 
+// POST /api/questions -> fetch from Open Trivia
 function attachApi(server) {
   server.middlewares.use(async (req, res, next) => {
     const path = req.url?.split('?')[0]

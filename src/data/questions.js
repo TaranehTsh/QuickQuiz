@@ -1,3 +1,4 @@
+// backup questions used if the quiz API is unavailable
 export const categoryData = [
   {
     categoryId: 'general',

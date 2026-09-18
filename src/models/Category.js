@@ -1,3 +1,4 @@
+// one quiz topic (name + colour + its questions)
 export default class Category {
   constructor(categoryId, name, colour, questions = []) {
     if (!categoryId || !name || !colour) {
@@ -11,7 +12,7 @@ export default class Category {
   }
 
   getQuestions() {
-    return [...this.questions]
+    return [...this.questions] // copy so callers can't change the original list
   }
 
   addQuestions(questions) {

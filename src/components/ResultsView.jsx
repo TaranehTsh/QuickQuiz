@@ -4,7 +4,7 @@ export default function ResultsView({ results, playerNames, onRestart }) {
     ? 'The quiz finished in a tie.'
     : `${playerNames[results.winnerPlayerId]} wins the quiz!`
 
-  const rankedPlayers = [...results.players].sort((a, b) => b.score - a.score)
+  const rankedPlayers = [...results.players].sort((a, b) => b.score - a.score) // highest score first
 
   return (
     <div className="view-panel">

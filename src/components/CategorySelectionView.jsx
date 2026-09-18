@@ -1,4 +1,5 @@
 // developer-Leon
+// coloured category buttons for the player whose turn it is
 export default function CategorySelectionView({
   activePlayerName,
   categories,

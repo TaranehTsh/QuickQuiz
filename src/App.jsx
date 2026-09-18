@@ -29,6 +29,7 @@ const playerNames = {
   'player-2': 'Player 2',
 }
 
+// builds a fresh 2-player game
 function createGame() {
   const players = [new Player('player-1'), new Player('player-2')]
   const gameSession = new GameSession(`session-${Date.now()}`, players)
@@ -71,6 +72,7 @@ function App() {
   const { gameSession } = game
   const activePlayer = gameSession.getActivePlayer()
   const currentRound = gameSession.getCurrentRound()
+  // header: which set and which question (1/3) we are on
   const displayedSet = Math.min(
     Math.max(gameSession.challenges.length, 1),
     CHALLENGES_PER_GAME,
@@ -106,6 +108,7 @@ function App() {
   }
 
   // developer-Taraneh
+  // player picks a category, then we load 6 questions (3 each)
   async function handleCategorySelect(categoryId) {
     const categoryChoice = game.turnController.chooseCategory(
       gameSession.activePlayerId,
@@ -148,6 +151,7 @@ function App() {
   function handleContinue() {
     const nextQuestion = game.quizController.continueIfMoreQuestions()
 
+    // still on this player's 3 questions
     if (nextQuestion) {
       setCurrentQuestion(nextQuestion)
       setFeedback(null)
@@ -161,6 +165,7 @@ function App() {
 
     if (!outcome.bothPlayersFinished) {
       // developer-Taraneh
+      // other player still needs to answer their 3
       setView('handoff')
       return
     }
@@ -169,6 +174,7 @@ function App() {
   }
 
   function handleHandoffContinue() {
+    // start the second player's 3 questions (same category, different set)
     const question = game.quizController.startOpponentTurn()
     setCurrentQuestion(question)
     setFeedback(null)
@@ -176,6 +182,7 @@ function App() {
   }
 
   function handleChallengeContinue() {
+    // after 2 sets, show final results; otherwise the other player picks
     if (game.quizController.isQuizComplete(CHALLENGES_PER_GAME)) {
       gameSession.finishRound()
       const results = game.resultsService.getFinalResults()
@@ -296,6 +303,7 @@ function App() {
         {/* developer-Tim */}
         {view === 'quiz' && currentQuestion && selectedCategory && (
           <QuizView
+            // remount so the timer resets for each question
             key={`${gameSession.activePlayerId}-${currentQuestion.questionId}`}
             activePlayerName={playerNames[activePlayer.playerId]}
             category={selectedCategory}
@@ -315,6 +323,7 @@ function App() {
           />
         )}
 
+        {/* pass the device to the other player */}
         {view === 'handoff' && challengeOutcome && (
           <div className="view-panel">
             <p className="view-kicker">Pass the device</p>
@@ -338,6 +347,7 @@ function App() {
           </div>
         )}
 
+        {/* who won this category set */}
         {view === 'challenge-result' && challengeOutcome && (
           <div className="view-panel">
             <p className="view-kicker">Set {displayedSet} result</p>

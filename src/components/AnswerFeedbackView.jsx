@@ -1,4 +1,5 @@
 // developer-Hafsa
+// correct / incorrect card, and shows the right answer if they missed it
 export default function AnswerFeedbackView({
   activePlayerName,
   feedback,
