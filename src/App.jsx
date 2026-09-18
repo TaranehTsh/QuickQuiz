@@ -68,6 +68,8 @@ function App() {
   const [feedback, setFeedback] = useState(null)
   const [challengeOutcome, setChallengeOutcome] = useState(null)
   const [finalResults, setFinalResults] = useState(null)
+  // developer-Taraneh
+  const [flaggedQuestionIds, setFlaggedQuestionIds] = useState([])
 
   const { gameSession } = game
   const activePlayer = gameSession.getActivePlayer()
@@ -218,7 +220,17 @@ function App() {
     setFeedback(null)
     setChallengeOutcome(null)
     setFinalResults(null)
+    setFlaggedQuestionIds([])
     setView('dashboard')
+  }
+
+  // developer-Taraneh
+  function handleFlagQuestion(questionId) {
+    if (!questionId || flaggedQuestionIds.includes(questionId)) {
+      return
+    }
+
+    setFlaggedQuestionIds([...flaggedQuestionIds, questionId])
   }
 
   return (
@@ -318,8 +330,14 @@ function App() {
         {view === 'feedback' && feedback && (
           <AnswerFeedbackView
             activePlayerName={playerNames[activePlayer.playerId]}
+            alreadyFlagged={flaggedQuestionIds.includes(
+              feedback.answerRecord?.questionId,
+            )}
             feedback={feedback}
             onContinue={handleContinue}
+            onFlagQuestion={() =>
+              handleFlagQuestion(feedback.answerRecord?.questionId)
+            }
           />
         )}
 
