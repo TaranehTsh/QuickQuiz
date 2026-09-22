@@ -21,7 +21,11 @@ export default class AuthService {
 
   ensureDefaultAccount() {
     const users = this.getUsers()
-    const exists = users.some((user) => user.email === DEFAULT_ACCOUNT.email)
+    const exists = users.some(
+      (user) => user.email === DEFAULT_ACCOUNT.email,
+    )
+
+    let changed = false
 
     if (!exists) {
       users.push({
@@ -29,7 +33,22 @@ export default class AuthService {
         username: DEFAULT_ACCOUNT.username,
         password: this.obfuscate(DEFAULT_ACCOUNT.password),
         quizHistory: [],
+        friends: [],
       })
+
+      changed = true
+    }
+
+    // developer-Leon
+    // Adds a friends list to accounts created before this feature existed.
+    users.forEach((user) => {
+      if (!Array.isArray(user.friends)) {
+        user.friends = []
+        changed = true
+      }
+    })
+
+    if (changed) {
       this.saveUsers(users)
     }
   }
@@ -64,6 +83,7 @@ export default class AuthService {
       username,
       password: this.obfuscate(password),
       quizHistory: [],
+      friends: [],
     }
 
     users.push(newUser)
@@ -75,6 +95,7 @@ export default class AuthService {
 
   logIn({ email, password }) {
     const users = this.getUsers()
+
     const user = users.find(
       (candidate) =>
         candidate.email === email &&
@@ -86,7 +107,11 @@ export default class AuthService {
     }
 
     this.setCurrentUser(email)
-    return { email: user.email, username: user.username }
+
+    return {
+      email: user.email,
+      username: user.username,
+    }
   }
 
   setCurrentUser(email) {
@@ -95,11 +120,21 @@ export default class AuthService {
 
   getCurrentUser() {
     const email = localStorage.getItem(CURRENT_USER_KEY)
+
     if (!email) return null
 
     const users = this.getUsers()
-    const user = users.find((candidate) => candidate.email === email)
-    return user ? { email: user.email, username: user.username } : null
+
+    const user = users.find(
+      (candidate) => candidate.email === email,
+    )
+
+    return user
+      ? {
+          email: user.email,
+          username: user.username,
+        }
+      : null
   }
 
   logOut() {
@@ -108,17 +143,130 @@ export default class AuthService {
 
   recordQuizResult(email, resultSummary) {
     const users = this.getUsers()
-    const user = users.find((candidate) => candidate.email === email)
+
+    const user = users.find(
+      (candidate) => candidate.email === email,
+    )
+
     if (!user) return
 
     user.quizHistory = user.quizHistory || []
-    user.quizHistory.push({ ...resultSummary, playedAt: new Date().toISOString() })
+
+    user.quizHistory.push({
+      ...resultSummary,
+      playedAt: new Date().toISOString(),
+    })
+
     this.saveUsers(users)
   }
 
   getQuizHistory(email) {
     const users = this.getUsers()
-    const user = users.find((candidate) => candidate.email === email)
+
+    const user = users.find(
+      (candidate) => candidate.email === email,
+    )
+
     return user?.quizHistory ?? []
+  }
+
+  // developer-Leon
+  // Search registered users by username or email.
+  searchUsers(currentUserEmail, query) {
+    const searchText = query.trim().toLowerCase()
+
+    if (!searchText) {
+      return []
+    }
+
+    const users = this.getUsers()
+
+    const currentUser = users.find(
+      (user) => user.email === currentUserEmail,
+    )
+
+    if (!currentUser) {
+      return []
+    }
+
+    const friends = currentUser.friends ?? []
+
+    return users
+      .filter((user) => user.email !== currentUserEmail)
+      .filter(
+        (user) =>
+          user.username.toLowerCase().includes(searchText) ||
+          user.email.toLowerCase().includes(searchText),
+      )
+      .map((user) => ({
+        email: user.email,
+        username: user.username,
+        isFriend: friends.includes(user.email),
+      }))
+  }
+
+  // developer-Leon
+  // Adds a user to the friend list only.
+  // This does not affect quiz opponent selection.
+  addFriend(currentUserEmail, friendEmail) {
+    const users = this.getUsers()
+
+    const currentUser = users.find(
+      (user) => user.email === currentUserEmail,
+    )
+
+    const friend = users.find(
+      (user) => user.email === friendEmail,
+    )
+
+    if (!currentUser) {
+      throw new Error('Current user could not be found.')
+    }
+
+    if (!friend) {
+      throw new Error('User could not be found.')
+    }
+
+    if (currentUser.email === friend.email) {
+      throw new Error('You cannot add yourself as a friend.')
+    }
+
+    currentUser.friends = currentUser.friends ?? []
+
+    if (currentUser.friends.includes(friend.email)) {
+      throw new Error('This user is already your friend.')
+    }
+
+    currentUser.friends.push(friend.email)
+
+    this.saveUsers(users)
+  }
+
+  // developer-Leon
+  // Returns the current user's saved friends.
+  getFriends(email) {
+    const users = this.getUsers()
+
+    const currentUser = users.find(
+      (user) => user.email === email,
+    )
+
+    if (!currentUser) {
+      return []
+    }
+
+    const friendEmails = currentUser.friends ?? []
+
+    return friendEmails
+      .map((friendEmail) =>
+        users.find(
+          (user) => user.email === friendEmail,
+        ),
+      )
+      .filter(Boolean)
+      .map((friend) => ({
+        email: friend.email,
+        username: friend.username,
+      }))
   }
 }
