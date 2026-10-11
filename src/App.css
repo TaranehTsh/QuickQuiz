@@ -672,3 +672,49 @@ button {
   gap: 12px;
   margin-top: 16px;
 }
+/* === Sprint 2: log-out confirmation pop-up === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px;
+  max-width: 380px;
+  width: calc(100% - 40px);
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.modal-card h3 {
+  margin: 0 0 8px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.secondary-button {
+  padding: 12px 24px;
+  border: 2px solid #c8cbe0;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #3b3f66;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  background: #f1f2f9;
+}
