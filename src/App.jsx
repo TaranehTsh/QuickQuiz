@@ -105,6 +105,14 @@ function App() {
     setView('login')
   }
 
+  function handleUpdateUsername(newUsername) {
+    const updatedUser = authService.updateUsername(
+      currentUser.email,
+      newUsername,
+    )
+    setCurrentUser(updatedUser)
+  }
+
   function handleStartQuizFromDashboard() {
     setView('category')
   }
@@ -287,6 +295,7 @@ function App() {
             quizHistory={authService.getQuizHistory(currentUser.email)}
             onStartQuiz={handleStartQuizFromDashboard}
             onLogOut={handleLogOut}
+            onUpdateUsername={handleUpdateUsername}
           />
         )}
 

@@ -2,13 +2,53 @@ import { useState } from 'react'
 
 // developer-Hafsa
 // logged-in home screen and past quiz scores
-export default function DashboardView({ user, quizHistory, onStartQuiz, onLogOut }) {
+export default function DashboardView({
+  user,
+  quizHistory,
+  onStartQuiz,
+  onLogOut,
+  onUpdateUsername,
+}) {
   // Sprint 2: ask for confirmation before logging out
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+
+  // Sprint 2: edit username
+  const [isEditingUsername, setIsEditingUsername] = useState(false)
+  const [usernameInput, setUsernameInput] = useState(user.username)
+  const [usernameError, setUsernameError] = useState(null)
 
   function handleConfirmLogOut() {
     setShowLogoutConfirm(false)
     onLogOut()
+  }
+
+  function handleStartEditing() {
+    setUsernameInput(user.username)
+    setUsernameError(null)
+    setIsEditingUsername(true)
+  }
+
+  function handleCancelEditing() {
+    setUsernameError(null)
+    setIsEditingUsername(false)
+  }
+
+  function handleSaveUsername(event) {
+    event.preventDefault()
+
+    // Empty (or spaces-only) names are rejected and nothing is saved
+    if (!usernameInput.trim()) {
+      setUsernameError('Username cannot be empty.')
+      return
+    }
+
+    try {
+      onUpdateUsername(usernameInput)
+      setUsernameError(null)
+      setIsEditingUsername(false)
+    } catch (err) {
+      setUsernameError(err.message)
+    }
   }
 
   return (
@@ -16,6 +56,43 @@ export default function DashboardView({ user, quizHistory, onStartQuiz, onLogOut
       <div className="view-heading">
         <p className="view-kicker">Welcome back</p>
         <h2>{user.username}&apos;s Dashboard</h2>
+
+        {isEditingUsername ? (
+          <form className="edit-username-form" onSubmit={handleSaveUsername}>
+            <label className="form-field">
+              New username
+              <input
+                maxLength={30}
+                onChange={(event) => setUsernameInput(event.target.value)}
+                type="text"
+                value={usernameInput}
+              />
+            </label>
+
+            {usernameError && <p className="form-error">{usernameError}</p>}
+
+            <div className="edit-username-actions">
+              <button className="primary-button" type="submit">
+                Save
+              </button>
+              <button
+                className="secondary-button"
+                onClick={handleCancelEditing}
+                type="button"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : (
+          <button
+            className="link-button"
+            onClick={handleStartEditing}
+            type="button"
+          >
+            Edit username
+          </button>
+        )}
       </div>
 
       <button className="primary-button" onClick={onStartQuiz} type="button">

@@ -106,6 +106,28 @@ export default class AuthService {
     localStorage.removeItem(CURRENT_USER_KEY)
   }
 
+  // Sprint 2: change the display name of an existing account.
+  // Rejects an empty (or spaces-only) username and leaves the saved name unchanged.
+  updateUsername(email, newUsername) {
+    const trimmed = String(newUsername ?? '').trim()
+
+    if (!trimmed) {
+      throw new Error('Username cannot be empty.')
+    }
+
+    const users = this.getUsers()
+    const user = users.find((candidate) => candidate.email === email)
+
+    if (!user) {
+      throw new Error('Account not found.')
+    }
+
+    user.username = trimmed
+    this.saveUsers(users)
+
+    return { email: user.email, username: user.username }
+  }
+
   recordQuizResult(email, resultSummary) {
     const users = this.getUsers()
     const user = users.find((candidate) => candidate.email === email)
