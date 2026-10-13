@@ -718,3 +718,16 @@ button {
 .secondary-button:hover {
   background: #f1f2f9;
 }
+/* === Sprint 2: edit username === */
+.edit-username-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 320px;
+  margin-top: 12px;
+}
+
+.edit-username-actions {
+  display: flex;
+  gap: 12px;
+}
