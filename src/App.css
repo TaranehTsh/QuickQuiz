@@ -776,6 +776,58 @@ button {
 .secondary-button:hover {
   background: #f1f2f9;
 }
+
+/* developer-Taraneh */
+.dashboard-heading-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dashboard-heading-row h2 {
+  margin-bottom: 0;
+}
+
+.help-icon-button {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: 2px solid #c8cbe0;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #5b5ce2;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.help-icon-button:hover {
+  background: #eef0ff;
+  border-color: #5b5ce2;
+}
+
+.instructions-card {
+  max-width: 460px;
+  text-align: left;
+}
+
+.instructions-card .view-kicker {
+  margin-bottom: 4px;
+}
+
+.instructions-list {
+  margin: 12px 0 0;
+  padding-left: 1.2rem;
+  color: #3b3f66;
+  text-align: left;
+}
+
+.instructions-list li {
+  margin: 8px 0;
+  line-height: 1.4;
+}
 /* === Sprint 2: edit username === */
 .edit-username-form {
   display: flex;

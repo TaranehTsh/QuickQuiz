@@ -113,6 +113,18 @@ function App() {
     setCurrentUser(updatedUser)
   }
 
+  // developer-Taraneh
+  function handleInstructionsSeen() {
+    if (!currentUser) {
+      return
+    }
+
+    const updatedUser = authService.markInstructionsSeen(currentUser.email)
+    if (updatedUser) {
+      setCurrentUser(updatedUser)
+    }
+  }
+
   function handleStartQuizFromDashboard() {
     setView('category')
   }
@@ -307,6 +319,7 @@ function App() {
             onStartQuiz={handleStartQuizFromDashboard}
             onLogOut={handleLogOut}
             onUpdateUsername={handleUpdateUsername}
+            onInstructionsSeen={handleInstructionsSeen}
           />
         )}
 
