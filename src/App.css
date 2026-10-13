@@ -204,6 +204,16 @@ button {
   font-size: 0.9rem;
 }
 
+/* developer-Will */
+/* the random button sits under the other buttons and is as wide as them */
+.random-category-button {
+  /* the stripe and the dot show all four category colours mixed together */
+  --category-colour: linear-gradient(135deg, #377cf6, #16a673, #7b52df, #ef7b2d);
+  width: 100%;
+  min-height: 110px;
+  margin-top: 16px;
+}
+
 .quiz-meta {
   display: flex;
   align-items: center;
