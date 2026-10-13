@@ -1,0 +1,38 @@
+
+> quickquiz@0.0.0 test
+> node --test --test-reporter=spec src/tests/suddenDeath.test.js src/tests/soloPractice.test.js src/tests/regression.test.js
+
+✔ the normal game still requires two players (1.477414ms)
+✔ unknown game modes and invalid practice player counts are rejected (0.189266ms)
+✔ category colours remain distinct and consistent (0.335727ms)
+✔ normal turns still hand off and rotate the category chooser (1.035556ms)
+✔ an answer can be recorded only once and the other player cannot submit (0.312022ms)
+✔ a new game resets scores and keeps the requested player count (0.289698ms)
+✔ local questions remain available if the question API fails (1.001074ms)
+✔ S01: practice creates a game with only the current player (1.389501ms)
+✔ S02: practice loads the chosen category with the normal timer (0.411102ms)
+✔ S03: a completed practice shows a personal result without a handoff (0.971609ms)
+✔ practice never needs sudden death (0.210027ms)
+✔ practice results have no opponent, winner or tie (0.258391ms)
+✔ a timed-out practice answer receives no points (0.43057ms)
+✔ cannot finish practice before all questions have been answered (1.604406ms)
+✔ a versus session cannot use the practice entry point (0.220203ms)
+✔ T01: a completed tied game requires sudden death (1.854013ms)
+✔ T02: only player one correct gives player one the win (1.00495ms)
+✔ T03: the same result for both players requires another question (0.233383ms)
+✔ waits for both players before declaring a winner (0.467607ms)
+✔ only player two correct gives player two the win (0.232532ms)
+✔ both correct answers require another sudden-death question (1.086914ms)
+✔ a new zero-score game does not start sudden death (0.277489ms)
+✔ a completed game with different scores does not start sudden death (0.388166ms)
+✔ a duplicate or unknown player result is rejected (0.819779ms)
+✔ the controller completes a tie-break and the results display its winner (4.854359ms)
+✔ an unresolved tie-break starts another question and resets answer tracking (0.540818ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 120.574002

@@ -718,3 +718,19 @@ button {
 .secondary-button:hover {
   background: #f1f2f9;
 }
+/* developer-Leon: Sprint 2 single-player layout */
+.practice-button { margin: 12px 0 0; }
+.score-strip--practice { grid-template-columns: 1fr; }
+
+/* The private score label must also fit a narrow player's card. */
+.player-score { gap: 10px; flex-wrap: wrap; }
+.player-score strong.score-hidden {
+  width: auto;
+  min-width: 42px;
+  padding: 0 10px;
+  font-size: 0.85rem;
+}
+
+.result-card { position: relative; }
+.results-grid--practice { grid-template-columns: 1fr; }
+.winner-label { font-size: 0.65em; margin-left: 0.4rem; color: #3730a3; }

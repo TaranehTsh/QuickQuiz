@@ -1,0 +1,68 @@
+[
+  {
+    "id": "T01",
+    "title": "T01: a completed tied game requires sudden death",
+    "implementation_path": "src/models/GameSession.js",
+    "panels": {
+      "test": "T01-test.png",
+      "fail": "T01-fail.png",
+      "implementation": "T01-implementation.png",
+      "pass": "T01-pass.png"
+    }
+  },
+  {
+    "id": "T02",
+    "title": "T02: only player one correct gives player one the win",
+    "implementation_path": "src/models/SuddenDeathRound.js",
+    "panels": {
+      "test": "T02-test.png",
+      "fail": "T02-fail.png",
+      "implementation": "T02-implementation.png",
+      "pass": "T02-pass.png"
+    }
+  },
+  {
+    "id": "T03",
+    "title": "T03: the same result for both players requires another question",
+    "implementation_path": "src/models/SuddenDeathRound.js",
+    "panels": {
+      "test": "T03-test.png",
+      "fail": "T03-fail.png",
+      "implementation": "T03-implementation.png",
+      "pass": "T03-pass.png"
+    }
+  },
+  {
+    "id": "S01",
+    "title": "S01: practice creates a game with only the current player",
+    "implementation_path": "src/models/GameSession.js",
+    "panels": {
+      "test": "S01-test.png",
+      "fail": "S01-fail.png",
+      "implementation": "S01-implementation.png",
+      "pass": "S01-pass.png"
+    }
+  },
+  {
+    "id": "S02",
+    "title": "S02: practice loads the chosen category with the normal timer",
+    "implementation_path": "src/controllers/QuizAndTimerController.js",
+    "panels": {
+      "test": "S02-test.png",
+      "fail": "S02-fail.png",
+      "implementation": "S02-implementation.png",
+      "pass": "S02-pass.png"
+    }
+  },
+  {
+    "id": "S03",
+    "title": "S03: a completed practice shows a personal result without a handoff",
+    "implementation_path": "src/controllers/QuizAndTimerController.js",
+    "panels": {
+      "test": "S03-test.png",
+      "fail": "S03-fail.png",
+      "implementation": "S03-implementation.png",
+      "pass": "S03-pass.png"
+    }
+  }
+]

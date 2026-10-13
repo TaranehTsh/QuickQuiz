@@ -1,0 +1,22 @@
+{
+  "unit": {
+    "command": "npm test",
+    "exit_code": 0,
+    "stdout": "\n> quickquiz@0.0.0 test\n> node --test --test-reporter=spec src/tests/suddenDeath.test.js src/tests/soloPractice.test.js src/tests/regression.test.js\n\n\u2714 the normal game still requires two players (1.477414ms)\n\u2714 unknown game modes and invalid practice player counts are rejected (0.189266ms)\n\u2714 category colours remain distinct and consistent (0.335727ms)\n\u2714 normal turns still hand off and rotate the category chooser (1.035556ms)\n\u2714 an answer can be recorded only once and the other player cannot submit (0.312022ms)\n\u2714 a new game resets scores and keeps the requested player count (0.289698ms)\n\u2714 local questions remain available if the question API fails (1.001074ms)\n\u2714 S01: practice creates a game with only the current player (1.389501ms)\n\u2714 S02: practice loads the chosen category with the normal timer (0.411102ms)\n\u2714 S03: a completed practice shows a personal result without a handoff (0.971609ms)\n\u2714 practice never needs sudden death (0.210027ms)\n\u2714 practice results have no opponent, winner or tie (0.258391ms)\n\u2714 a timed-out practice answer receives no points (0.43057ms)\n\u2714 cannot finish practice before all questions have been answered (1.604406ms)\n\u2714 a versus session cannot use the practice entry point (0.220203ms)\n\u2714 T01: a completed tied game requires sudden death (1.854013ms)\n\u2714 T02: only player one correct gives player one the win (1.00495ms)\n\u2714 T03: the same result for both players requires another question (0.233383ms)\n\u2714 waits for both players before declaring a winner (0.467607ms)\n\u2714 only player two correct gives player two the win (0.232532ms)\n\u2714 both correct answers require another sudden-death question (1.086914ms)\n\u2714 a new zero-score game does not start sudden death (0.277489ms)\n\u2714 a completed game with different scores does not start sudden death (0.388166ms)\n\u2714 a duplicate or unknown player result is rejected (0.819779ms)\n\u2714 the controller completes a tie-break and the results display its winner (4.854359ms)\n\u2714 an unresolved tie-break starts another question and resets answer tracking (0.540818ms)\n\u2139 tests 26\n\u2139 suites 0\n\u2139 pass 26\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 120.574002\n",
+    "stderr": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n"
+  },
+  "build": {
+    "command": "npm run build",
+    "exit_code": 0,
+    "stdout": "\n> quickquiz@0.0.0 build\n> vite build\n\nvite v8.2.2 building client environment for production...\ntransforming...\n\u2713 42 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.58 kB \u2502 gzip:  0.36 kB\ndist/assets/index-DtQR7umF.css   10.07 kB \u2502 gzip:  3.04 kB\ndist/assets/index-B2lkDdhc.js   239.78 kB \u2502 gzip: 73.80 kB\n\n\u2713 built in 135ms\n",
+    "stderr": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n"
+  },
+  "lint": {
+    "command": "npm run lint",
+    "exit_code": 0,
+    "stdout": "\n> quickquiz@0.0.0 lint\n> oxlint\n\n",
+    "stderr": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n"
+  },
+  "node_version": "v24.19.0",
+  "source_zip_sha256": "810aadfaa5e84a31ac98eeb07d69f8733e947c74b650056e22df378c139916b2"
+}

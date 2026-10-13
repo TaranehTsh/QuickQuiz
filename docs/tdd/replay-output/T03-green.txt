@@ -1,0 +1,11 @@
+✔ T01: a completed tied game requires sudden death (1.041675ms)
+✔ T02: only player one correct gives player one the win (0.622461ms)
+✔ T03: the same result for both players requires another question (0.186983ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 81.836878
