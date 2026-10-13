@@ -561,13 +561,28 @@ button {
 }
 
 .hint-button {
-  padding: 8px 18px;
-  font-size: 14px;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 2px solid #e6b800;
+  border-radius: 14px;
+  background: #fff4b8;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
 }
 
+.hint-button:hover:not(:disabled) {
+  background: #ffe566;
+}
+
+/* grey when the hint is already used this round */
+.hint-button--used,
 .hint-button:disabled {
   cursor: default;
-  opacity: 0.6;
+  background: #e4e7ee;
+  border-color: #b8becc;
+  opacity: 1;
 }
 
 .hint-status {

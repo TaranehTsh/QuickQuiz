@@ -135,12 +135,13 @@ export default function QuizView({
       {/* developer-Taraneh */}
       <div className="hint-row">
         <button
-          className="secondary-button hint-button"
+          aria-label={hintUsed ? 'Hint already used this round' : 'Use hint'}
+          className={`hint-button${hintUsed || locked ? ' hint-button--used' : ''}`}
           disabled={locked || hintUsed}
           onClick={handleHint}
           type="button"
         >
-          Hint
+          {hintUsed || locked ? '🔒' : '💡'}
         </button>
         {hintedWrongOptions.length > 0 && (
           <p className="hint-status">
