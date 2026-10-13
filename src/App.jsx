@@ -135,6 +135,17 @@ function App() {
     setView('quiz')
   }
 
+  // developer-Will
+  // player wants a surprise, so we pick a category by luck
+  function handleRandomCategorySelect() {
+    // ask the controller to pick one category for us
+    const randomCategoryId = game.turnController.pickRandomCategoryId()
+
+    // now do the very same steps as when a player taps a category button
+    // so the questions come from the category that was picked
+    handleCategorySelect(randomCategoryId)
+  }
+
   function handleAnswerSubmit(answer, timeRemaining) {
     const answerResult = game.quizController.checkAnswer(
       gameSession.activePlayerId,
@@ -296,6 +307,7 @@ function App() {
             activePlayerName={playerNames[activePlayer.playerId]}
             categories={game.repository.getCategories()}
             onSelectCategory={handleCategorySelect}
+            onSelectRandomCategory={handleRandomCategorySelect}
           />
         )}
 
