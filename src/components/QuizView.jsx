@@ -25,6 +25,8 @@ export default function QuizView({
   category,
   question,
   timeLimit,
+  hintUsedThisRound = false,
+  onUseHint,
   onSubmitAnswer,
   result, // developer-Hafsa
 }) {
@@ -32,9 +34,9 @@ export default function QuizView({
   const [locked, setLocked] = useState(false) // stop extra clicks after answering
   const timedOutRef = useRef(false)
   // developer-Taraneh
-  // which wrong answers the hint has marked red
+  // red marks only apply to the question where they used the hint
   const [hintedWrongOptions, setHintedWrongOptions] = useState([])
-  const hintUsed = hintedWrongOptions.length > 0 // one hint per question
+  const hintUsed = hintUsedThisRound || hintedWrongOptions.length > 0
 
   useEffect(() => {
     if (locked) {
@@ -69,12 +71,13 @@ export default function QuizView({
   }
 
   // developer-Taraneh
-  // one hint per question — two wrong answers go red, not the right one
+  // one hint per round (this player's 3 questions)
   function handleHint() {
     if (locked || hintUsed) {
       return
     }
 
+    onUseHint?.()
     setHintedWrongOptions(pickHintedWrongOptions(question))
   }
 
@@ -139,11 +142,14 @@ export default function QuizView({
         >
           Hint
         </button>
-        {hintUsed && (
+        {hintedWrongOptions.length > 0 && (
           <p className="hint-status">
             Two wrong answers are marked red. The correct one is one of the two
             left.
           </p>
+        )}
+        {hintUsedThisRound && hintedWrongOptions.length === 0 && (
+          <p className="hint-status">Hint already used this round.</p>
         )}
       </div>
 
