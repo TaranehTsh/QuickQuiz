@@ -340,6 +340,8 @@ function App() {
             key={`${gameSession.activePlayerId}-${currentQuestion.questionId}`}
             activePlayerName={playerNames[activePlayer.playerId]}
             category={selectedCategory}
+            hintUsedThisRound={Boolean(currentRound?.hintUsed)}
+            onUseHint={() => currentRound?.useHint()}
             question={currentQuestion}
             timeLimit={QUESTION_TIME_LIMIT}
             onSubmitAnswer={handleAnswerSubmit}

@@ -559,6 +559,54 @@ button {
 .answer-button.disabled {
   transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
+
+/* developer-Taraneh */
+/* hint button and the two wrong answers it marks red */
+.hint-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+.hint-button {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 2px solid #e6b800;
+  border-radius: 14px;
+  background: #fff4b8;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.hint-button:hover:not(:disabled) {
+  background: #ffe566;
+}
+
+/* grey when the hint is already used this round */
+.hint-button--used,
+.hint-button:disabled {
+  cursor: default;
+  background: #e4e7ee;
+  border-color: #b8becc;
+  opacity: 1;
+}
+
+.hint-status {
+  margin: 0;
+  color: #5b5f7a;
+  font-size: 0.9rem;
+}
+
+.answer-button.hint-wrong {
+  background-color: #f8d7da;
+  border-color: #dc3545;
+  color: #721c24;
+  opacity: 0.7;
+}
 /* developer-Hafsa */
 /* === Additions for auth (SignUp/Login/Dashboard) === */
 .auth-form {
