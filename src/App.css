@@ -559,6 +559,54 @@ button {
 .answer-button.disabled {
   transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
+
+/* developer-Taraneh */
+/* hint button and the two wrong answers it marks red */
+.hint-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+.hint-button {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 2px solid #e6b800;
+  border-radius: 14px;
+  background: #fff4b8;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.hint-button:hover:not(:disabled) {
+  background: #ffe566;
+}
+
+/* grey when the hint is already used this round */
+.hint-button--used,
+.hint-button:disabled {
+  cursor: default;
+  background: #e4e7ee;
+  border-color: #b8becc;
+  opacity: 1;
+}
+
+.hint-status {
+  margin: 0;
+  color: #5b5f7a;
+  font-size: 0.9rem;
+}
+
+.answer-button.hint-wrong {
+  background-color: #f8d7da;
+  border-color: #dc3545;
+  color: #721c24;
+  opacity: 0.7;
+}
 /* developer-Hafsa */
 /* === Additions for auth (SignUp/Login/Dashboard) === */
 .auth-form {
@@ -727,6 +775,58 @@ button {
 
 .secondary-button:hover {
   background: #f1f2f9;
+}
+
+/* developer-Taraneh */
+.dashboard-heading-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dashboard-heading-row h2 {
+  margin-bottom: 0;
+}
+
+.help-icon-button {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: 2px solid #c8cbe0;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #5b5ce2;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.help-icon-button:hover {
+  background: #eef0ff;
+  border-color: #5b5ce2;
+}
+
+.instructions-card {
+  max-width: 460px;
+  text-align: left;
+}
+
+.instructions-card .view-kicker {
+  margin-bottom: 4px;
+}
+
+.instructions-list {
+  margin: 12px 0 0;
+  padding-left: 1.2rem;
+  color: #3b3f66;
+  text-align: left;
+}
+
+.instructions-list li {
+  margin: 8px 0;
+  line-height: 1.4;
 }
 /* === Sprint 2: edit username === */
 .edit-username-form {

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import HowToPlayView from './HowToPlayView.jsx'
 
 // developer-Hafsa
 // logged-in home screen and past quiz scores
@@ -8,9 +9,13 @@ export default function DashboardView({
   onStartQuiz,
   onLogOut,
   onUpdateUsername,
+  onInstructionsSeen,
 }) {
   // Sprint 2: ask for confirmation before logging out
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+  // developer-Taraneh
+  // new players see How to play the first time they open the dashboard
+  const [showHowToPlay, setShowHowToPlay] = useState(!user.hasSeenInstructions)
 
   // Sprint 2: edit username
   const [isEditingUsername, setIsEditingUsername] = useState(false)
@@ -54,8 +59,22 @@ export default function DashboardView({
   return (
     <div className="view-panel">
       <div className="view-heading">
-        <p className="view-kicker">Welcome back</p>
-        <h2>{user.username}&apos;s Dashboard</h2>
+        <div className="dashboard-heading-row">
+          <div>
+            <p className="view-kicker">Welcome back</p>
+            <h2>{user.username}&apos;s Dashboard</h2>
+          </div>
+          {/* developer-Taraneh */}
+          <button
+            aria-label="How to play"
+            className="help-icon-button"
+            onClick={() => setShowHowToPlay(true)}
+            title="How to play"
+            type="button"
+          >
+            ?
+          </button>
+        </div>
 
         {isEditingUsername ? (
           <form className="edit-username-form" onSubmit={handleSaveUsername}>
@@ -128,6 +147,15 @@ export default function DashboardView({
       >
         Log out
       </button>
+
+      {showHowToPlay && (
+        <HowToPlayView
+          onClose={() => {
+            setShowHowToPlay(false)
+            onInstructionsSeen?.()
+          }}
+        />
+      )}
 
       {showLogoutConfirm && (
         <div className="modal-overlay">

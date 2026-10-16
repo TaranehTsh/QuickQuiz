@@ -70,7 +70,7 @@ export default class AuthService {
     this.saveUsers(users)
     this.setCurrentUser(email)
 
-    return { email, username }
+    return this.toPublicUser(newUser)
   }
 
   logIn({ email, password }) {
@@ -86,7 +86,7 @@ export default class AuthService {
     }
 
     this.setCurrentUser(email)
-    return { email: user.email, username: user.username }
+    return this.toPublicUser(user)
   }
 
   setCurrentUser(email) {
@@ -99,7 +99,29 @@ export default class AuthService {
 
     const users = this.getUsers()
     const user = users.find((candidate) => candidate.email === email)
-    return user ? { email: user.email, username: user.username } : null
+    return user ? this.toPublicUser(user) : null
+  }
+
+  // developer-Taraneh
+  toPublicUser(user) {
+    return {
+      email: user.email,
+      username: user.username,
+      hasSeenInstructions: Boolean(user.hasSeenInstructions),
+    }
+  }
+
+  markInstructionsSeen(email) {
+    const users = this.getUsers()
+    const user = users.find((candidate) => candidate.email === email)
+
+    if (!user) {
+      return null
+    }
+
+    user.hasSeenInstructions = true
+    this.saveUsers(users)
+    return this.toPublicUser(user)
   }
 
   logOut() {
@@ -125,7 +147,7 @@ export default class AuthService {
     user.username = trimmed
     this.saveUsers(users)
 
-    return { email: user.email, username: user.username }
+    return this.toPublicUser(user)
   }
 
   // Sprint 2: password reset (local only - no email is sent).

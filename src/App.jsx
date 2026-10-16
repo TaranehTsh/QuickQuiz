@@ -118,6 +118,7 @@ function App() {
     setCurrentUser(updatedUser)
   }
 
+
   function handleFindAccount(email) {
     return authService.accountExists(email)
   }
@@ -125,7 +126,19 @@ function App() {
   function handleResetPassword(email, newPassword) {
     authService.resetPassword(email, newPassword)
   }
- 
+
+  // developer-Taraneh
+  function handleInstructionsSeen() {
+    if (!currentUser) {
+      return
+    }
+
+    const updatedUser = authService.markInstructionsSeen(currentUser.email)
+    if (updatedUser) {
+      setCurrentUser(updatedUser)
+    }
+  }
+
 
   function handleStartQuizFromDashboard() {
     setView('category')
@@ -332,6 +345,7 @@ function App() {
             onStartQuiz={handleStartQuizFromDashboard}
             onLogOut={handleLogOut}
             onUpdateUsername={handleUpdateUsername}
+            onInstructionsSeen={handleInstructionsSeen}
           />
         )}
 
@@ -365,6 +379,8 @@ function App() {
             key={`${gameSession.activePlayerId}-${currentQuestion.questionId}`}
             activePlayerName={playerNames[activePlayer.playerId]}
             category={selectedCategory}
+            hintUsedThisRound={Boolean(currentRound?.hintUsed)}
+            onUseHint={() => currentRound?.useHint()}
             question={currentQuestion}
             timeLimit={QUESTION_TIME_LIMIT}
             onSubmitAnswer={handleAnswerSubmit}
