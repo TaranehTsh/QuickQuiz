@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 // developer-Hafsa
-export default function LoginView({ onLogIn, onSwitchToSignUp }) {
+export default function LoginView({ onLogIn, onSwitchToSignUp, onForgotPassword }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
@@ -53,6 +53,11 @@ export default function LoginView({ onLogIn, onSwitchToSignUp }) {
           Log in
         </button>
       </form>
+
+      {/* Sprint 2: forgot password */}
+      <button className="link-button" onClick={onForgotPassword} type="button">
+        Forgot password?
+      </button>
 
       <button className="link-button" onClick={onSwitchToSignUp} type="button">
         Don&apos;t have an account? Sign up

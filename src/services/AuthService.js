@@ -150,6 +150,32 @@ export default class AuthService {
     return this.toPublicUser(user)
   }
 
+  // Sprint 2: password reset (local only - no email is sent).
+  // Step 1: check that an account exists for the email the user typed.
+  accountExists(email) {
+    const wanted = String(email ?? '').trim()
+    return this.getUsers().some((candidate) => candidate.email === wanted)
+  }
+
+  // Step 2: replace the password. Only the password changes, so the
+  // username and the saved quiz history stay exactly as they were.
+  resetPassword(email, newPassword) {
+    if (!newPassword) {
+      throw new Error('Please enter a new password.')
+    }
+
+    const wanted = String(email ?? '').trim()
+    const users = this.getUsers()
+    const user = users.find((candidate) => candidate.email === wanted)
+
+    if (!user) {
+      throw new Error('No account found with that email.')
+    }
+
+    user.password = this.obfuscate(newPassword)
+    this.saveUsers(users)
+  }
+
   recordQuizResult(email, resultSummary) {
     const users = this.getUsers()
     const user = users.find((candidate) => candidate.email === email)

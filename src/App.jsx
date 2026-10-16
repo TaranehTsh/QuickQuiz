@@ -6,6 +6,7 @@ import QuizView from './components/QuizView.jsx'
 import ResultsView from './components/ResultsView.jsx'
 import SignUpView from './components/SignUpView.jsx'
 import LoginView from './components/LoginView.jsx'
+import ResetPasswordView from './components/ResetPasswordView.jsx'
 import DashboardView from './components/DashboardView.jsx'
 import QuizAndTimerController from './controllers/QuizAndTimerController.js'
 import TurnAndCategoryController from './controllers/TurnAndCategoryController.js'
@@ -84,7 +85,11 @@ function App() {
       ? currentRound.currentQuestionIndex + 1
       : 1
 
-  const inAuthFlow = view === 'login' || view === 'signup' || view === 'dashboard'
+  const inAuthFlow =
+   view === 'login' ||
+   view === 'signup' ||
+   view === 'dashboard' ||
+   view === 'reset-password'
 
   // developer-Hafsa
   function handleSignUp(details) {
@@ -113,6 +118,15 @@ function App() {
     setCurrentUser(updatedUser)
   }
 
+
+  function handleFindAccount(email) {
+    return authService.accountExists(email)
+  }
+ 
+  function handleResetPassword(email, newPassword) {
+    authService.resetPassword(email, newPassword)
+  }
+
   // developer-Taraneh
   function handleInstructionsSeen() {
     if (!currentUser) {
@@ -124,6 +138,7 @@ function App() {
       setCurrentUser(updatedUser)
     }
   }
+
 
   function handleStartQuizFromDashboard() {
     setView('category')
@@ -304,10 +319,21 @@ function App() {
 
       <section className="game-stage">
         {/* developer-Hafsa */}
-        {view === 'login' && (
-          <LoginView onLogIn={handleLogIn} onSwitchToSignUp={() => setView('signup')} />
-        )}
+                 {view === 'login' && (
+             <LoginView
+               onLogIn={handleLogIn}
+               onSwitchToSignUp={() => setView('signup')}
+               onForgotPassword={() => setView('reset-password')}
+             />
+           )}
 
+           {view === 'reset-password' && (
+             <ResetPasswordView
+               onFindAccount={handleFindAccount}
+               onResetPassword={handleResetPassword}
+               onBackToLogin={() => setView('login')}
+             />
+           )}
         {view === 'signup' && (
           <SignUpView onSignUp={handleSignUp} onSwitchToLogin={() => setView('login')} />
         )}

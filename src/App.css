@@ -841,3 +841,9 @@ button {
   display: flex;
   gap: 12px;
 }
+/* === Sprint 2: password reset === */
+.form-success {
+  color: #1e7e34;
+  font-weight: 600;
+  margin: 16px 0;
+}
