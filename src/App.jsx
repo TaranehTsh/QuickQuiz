@@ -239,11 +239,15 @@ function App() {
       // developer-Hafsa
       if (currentUser) {
         const me = results.players.find((p) => p.playerId === 'player-1')
-        authService.recordQuizResult(currentUser.email, {
+        const updatedUser = authService.recordQuizResult(currentUser.email, {
           score: me?.score ?? 0,
           won: results.winnerPlayerId === 'player-1',
           isTie: results.isTie,
         })
+        // developer-Taraneh
+        if (updatedUser) {
+          setCurrentUser(updatedUser)
+        }
       }
 
       setView('results')

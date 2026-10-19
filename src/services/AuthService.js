@@ -107,6 +107,7 @@ export default class AuthService {
       securityQuestion,
       securityAnswer: this.obfuscateAnswer(securityAnswer),
       quizHistory: [],
+      winStreak: 0,
     }
 
     users.push(newUser)
@@ -151,6 +152,7 @@ export default class AuthService {
       email: user.email,
       username: user.username,
       hasSeenInstructions: Boolean(user.hasSeenInstructions),
+      winStreak: Number(user.winStreak) || 0,
     }
   }
 
@@ -248,7 +250,14 @@ export default class AuthService {
 
     user.quizHistory = user.quizHistory || []
     user.quizHistory.push({ ...resultSummary, playedAt: new Date().toISOString() })
+
+    // developer-Taraneh
+    // win streak lives on the account so it stays after log out
+    const currentStreak = Number(user.winStreak) || 0
+    user.winStreak = resultSummary.won ? currentStreak + 1 : 0
+
     this.saveUsers(users)
+    return this.toPublicUser(user)
   }
 
   getQuizHistory(email) {
