@@ -808,6 +808,21 @@ button {
   border-color: #5b5ce2;
 }
 
+.win-streak {
+  margin: 16px 0 0;
+  padding: 12px 16px;
+  border: 1px solid #dfe5ef;
+  border-radius: 12px;
+  background: #f7f8fd;
+  color: #3b3f66;
+  font-size: 0.95rem;
+}
+
+.win-streak strong {
+  color: #5b5ce2;
+  font-size: 1.15rem;
+}
+
 .instructions-card {
   max-width: 460px;
   text-align: left;

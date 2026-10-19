@@ -118,6 +118,11 @@ export default function DashboardView({
         Start New Quiz
       </button>
 
+      {/* developer-Taraneh */}
+      <p className="win-streak" aria-label={`Win streak ${user.winStreak || 0}`}>
+        Win streak: <strong>{user.winStreak || 0}</strong>
+      </p>
+
       <div className="quiz-history">
         <h3>Your Quiz History</h3>
         {quizHistory.length === 0 ? (
