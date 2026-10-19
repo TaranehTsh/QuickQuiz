@@ -862,3 +862,16 @@ button {
   font-weight: 600;
   margin: 16px 0;
 }
+
+   /* === Sprint 2: security question === */
+   .form-field select {
+     padding: 10px;
+     border: 1px solid #ccc;
+     border-radius: 6px;
+     font-size: 15px;
+     background: #ffffff;
+   }
+
+   .security-question {
+     margin: 0;
+   }

@@ -120,11 +120,11 @@ function App() {
 
 
   function handleFindAccount(email) {
-    return authService.accountExists(email)
+    return authService.getSecurityQuestion(email)
   }
  
-  function handleResetPassword(email, newPassword) {
-    authService.resetPassword(email, newPassword)
+  function handleResetPassword(email, securityAnswer, newPassword) {
+    authService.resetPassword(email, securityAnswer, newPassword)
   }
 
   // developer-Taraneh
