@@ -1,0 +1,11 @@
+✔ S01: practice creates a game with only the current player (1.024959ms)
+✔ S02: practice loads the chosen category with the normal timer (0.257048ms)
+✔ S03: a completed practice shows a personal result without a handoff (0.611554ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 79.241695

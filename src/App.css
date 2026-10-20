@@ -933,102 +933,19 @@ button {
 .secondary-button:hover {
   background: #f1f2f9;
 }
+/* developer-Leon: Sprint 2 single-player layout */
+.practice-button { margin: 12px 0 0; }
+.score-strip--practice { grid-template-columns: 1fr; }
 
-/* developer-Taraneh */
-.dashboard-heading-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+/* The private score label must also fit a narrow player's card. */
+.player-score { gap: 10px; flex-wrap: wrap; }
+.player-score strong.score-hidden {
+  width: auto;
+  min-width: 42px;
+  padding: 0 10px;
+  font-size: 0.85rem;
 }
 
-.dashboard-heading-row h2 {
-  margin-bottom: 0;
-}
-
-.help-icon-button {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border: 2px solid #c8cbe0;
-  border-radius: 50%;
-  background: #ffffff;
-  color: #5b5ce2;
-  font-size: 1.05rem;
-  font-weight: 800;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.help-icon-button:hover {
-  background: #eef0ff;
-  border-color: #5b5ce2;
-}
-
-.win-streak {
-  margin: 16px 0 0;
-  padding: 12px 16px;
-  border: 1px solid #dfe5ef;
-  border-radius: 12px;
-  background: #f7f8fd;
-  color: #3b3f66;
-  font-size: 0.95rem;
-}
-
-.win-streak strong {
-  color: #5b5ce2;
-  font-size: 1.15rem;
-}
-
-.instructions-card {
-  max-width: 460px;
-  text-align: left;
-}
-
-.instructions-card .view-kicker {
-  margin-bottom: 4px;
-}
-
-.instructions-list {
-  margin: 12px 0 0;
-  padding-left: 1.2rem;
-  color: #3b3f66;
-  text-align: left;
-}
-
-.instructions-list li {
-  margin: 8px 0;
-  line-height: 1.4;
-}
-/* === Sprint 2: edit username === */
-.edit-username-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 320px;
-  margin-top: 12px;
-}
-
-.edit-username-actions {
-  display: flex;
-  gap: 12px;
-}
-/* === Sprint 2: password reset === */
-.form-success {
-  color: #1e7e34;
-  font-weight: 600;
-  margin: 16px 0;
-}
-
-   /* === Sprint 2: security question === */
-   .form-field select {
-     padding: 10px;
-     border: 1px solid #ccc;
-     border-radius: 6px;
-     font-size: 15px;
-     background: #ffffff;
-   }
-
-   .security-question {
-     margin: 0;
-   }
+.result-card { position: relative; }
+.results-grid--practice { grid-template-columns: 1fr; }
+.winner-label { font-size: 0.65em; margin-left: 0.4rem; color: #3730a3; }

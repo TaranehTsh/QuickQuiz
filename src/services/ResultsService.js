@@ -18,11 +18,19 @@ export default class ResultsService {
     // highest score wins; same score = tie
     const highestScore = Math.max(...players.map((player) => player.score))
     const winners = players.filter((player) => player.score === highestScore)
+    const isPractice = this.gameSession.mode === 'practice'
+    const suddenDeath = this.gameSession.suddenDeath
+    const outcome = suddenDeath?.getOutcome()
+    const winnerPlayerId = isPractice ? null : suddenDeath
+      ? outcome.winnerId
+      : winners.length === 1 ? winners[0].playerId : null
 
     return {
+      mode: this.gameSession.mode, // developer-Leon
       players,
-      isTie: winners.length > 1,
-      winnerPlayerId: winners.length === 1 ? winners[0].playerId : null, // developer-Will
+      isTie: !isPractice && winnerPlayerId === null,
+      winnerPlayerId,
+      suddenDeathRounds: suddenDeath?.roundNumber ?? 0,
       challengeResults: this.gameSession.challenges.map((challenge) => ({
         challengeNumber: challenge.challengeNumber,
         categoryId: challenge.categoryId,

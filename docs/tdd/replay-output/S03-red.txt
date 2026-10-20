@@ -1,0 +1,26 @@
+✔ S01: practice creates a game with only the current player (0.94612ms)
+✔ S02: practice loads the chosen category with the normal timer (0.407826ms)
+✖ S03: a completed practice shows a personal result without a handoff (0.495008ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 2
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 113.026693
+
+✖ failing tests:
+
+test at src/tests/soloPractice.test.js:21:1
+✖ S03: a completed practice shows a personal result without a handoff (0.495008ms)
+  Error: There is no active challenge.
+      at GameSession.completePlayerTurn (file:///tmp/quickquiz-tdd-rcndaU/src/models/GameSession.js:96:13)
+      at QuizAndTimerController.finishActivePlayerTurn (file:///tmp/quickquiz-tdd-rcndaU/src/controllers/QuizAndTimerController.js:93:29)
+      at TestContext.<anonymous> (file:///tmp/quickquiz-tdd-rcndaU/src/tests/soloPractice.test.js:29:35)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)

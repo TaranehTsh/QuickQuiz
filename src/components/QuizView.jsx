@@ -31,6 +31,7 @@ export default function QuizView({
   isFavorite = false,
   onToggleFavorite,
   result, // developer-Hafsa
+  hideFeedback = false, // developer-Leon: keep tie-break answers private.
 }) {
   const [timeRemaining, setTimeRemaining] = useState(timeLimit)
   const [locked, setLocked] = useState(false) // stop extra clicks after answering
@@ -86,18 +87,10 @@ export default function QuizView({
   // developer-Hafsa
   // green = correct, red = the one they picked if wrong
   function getButtonClass(option) {
-    if (result) {
-      if (option === result.correctAnswer) return 'answer-button correct'
-      if (option === result.submittedAnswer) return 'answer-button incorrect'
-      return 'answer-button disabled'
-    }
-
-    // red = hint crossed this one out
-    if (hintedWrongOptions.includes(option)) {
-      return 'answer-button hint-wrong'
-    }
-
-    return 'answer-button'
+    if (!result || hideFeedback) return 'answer-button'
+    if (option === result.correctAnswer) return 'answer-button correct'
+    if (option === result.submittedAnswer) return 'answer-button incorrect'
+    return 'answer-button disabled'
   }
 
   const progress = (timeRemaining / timeLimit) * 100

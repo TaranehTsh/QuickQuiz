@@ -1,0 +1,72 @@
+{
+  "captured_at_utc": "2026-10-13T00:27:58.863Z",
+  "executed_by": "Codex workspace",
+  "user_stories": [
+    {
+      "id": 72,
+      "name": "Sudden Death",
+      "developer": "Leon",
+      "implementation": "completed",
+      "manual_tester": "Hafsa",
+      "manual_acceptance": "pending"
+    },
+    {
+      "id": 73,
+      "name": "Solo Practice",
+      "developer": "Leon",
+      "implementation": "completed",
+      "manual_tester": "Tim",
+      "manual_acceptance": "pending"
+    }
+  ],
+  "unit_tests": {
+    "passed": 27,
+    "failed": 0
+  },
+  "commands": [
+    {
+      "command": "npm test",
+      "chunk_id": "743570",
+      "wall_time_seconds": 0.392080573,
+      "exit_code": 0,
+      "original_token_count": 594,
+      "output": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> quickquiz@0.0.0 test\n> node --test --test-reporter=spec src/tests/suddenDeath.test.js src/tests/soloPractice.test.js src/tests/regression.test.js\n\n✔ the normal game still requires two players (1.245057ms)\n✔ unknown game modes and invalid practice player counts are rejected (1.329425ms)\n✔ category colours remain distinct and consistent (0.197277ms)\n✔ normal turns still hand off and rotate the category chooser (0.826186ms)\n✔ an answer can be recorded only once and the other player cannot submit (0.275626ms)\n✔ a new game resets scores and keeps the requested player count (0.260463ms)\n✔ local questions remain available if the question API fails (0.831093ms)\n✔ S01: practice creates a game with only the current player (1.409245ms)\n✔ S02: practice loads the chosen category with the normal timer (0.420724ms)\n✔ S03: a completed practice shows a personal result without a handoff (1.157696ms)\n✔ practice never needs sudden death (0.207313ms)\n✔ practice results have no opponent, winner or tie (0.253222ms)\n✔ a timed-out practice answer receives no points (0.436498ms)\n✔ cannot finish practice before all questions have been answered (2.716937ms)\n✔ a versus session cannot use the practice entry point (0.275345ms)\n✔ T01: a completed tied game requires sudden death (1.328383ms)\n✔ T02: only player one correct gives player one the win (0.791654ms)\n✔ T03: the same result for both players requires another question (0.250899ms)\n✔ waits for both players before declaring a winner (0.313092ms)\n✔ only player two correct gives player two the win (0.153221ms)\n✔ both correct answers require another sudden-death question (0.161453ms)\n✔ a new zero-score game does not start sudden death (0.176266ms)\n✔ a completed game with different scores does not start sudden death (0.182675ms)\n✔ a duplicate or unknown player result is rejected (0.518832ms)\n✔ the controller completes a tie-break and the results display its winner (1.037224ms)\n✔ an unresolved tie-break starts another question and resets answer tracking (0.26536ms)\n✔ continuing twice cannot submit player one’s answer for player two (0.316918ms)\nℹ tests 27\nℹ suites 0\nℹ pass 27\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 136.489893\n"
+    },
+    {
+      "command": "npm run build",
+      "chunk_id": "fe02cc",
+      "wall_time_seconds": 0.276678439,
+      "exit_code": 0,
+      "original_token_count": 122,
+      "output": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> quickquiz@0.0.0 build\n> vite build\n\nvite v8.2.2 building client environment for production...\ntransforming...\n✓ 42 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.58 kB │ gzip:  0.36 kB\ndist/assets/index-Ci6eYdSl.css   10.20 kB │ gzip:  3.08 kB\ndist/assets/index-wRQYz-BC.js   240.01 kB │ gzip: 73.86 kB\n\n✓ built in 142ms\n"
+    },
+    {
+      "command": "npm run lint",
+      "chunk_id": "1f7bc6",
+      "wall_time_seconds": 0.099845484,
+      "exit_code": 0,
+      "original_token_count": 34,
+      "output": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> quickquiz@0.0.0 lint\n> oxlint\n\n"
+    }
+  ],
+  "browser": {
+    "results": [
+      "Demo login and dashboard: passed",
+      "Existing logout confirmation/cancel: passed",
+      "Practice API fallback and timeout locks all answer buttons: passed",
+      "Solo practice entry, 3 questions, 15-second timer, feedback, personal result and persistent practice history: passed",
+      "Sudden-death scores stay hidden until both finish, then show the final score: passed",
+      "Two-player turns, completed tie, hidden answers, repeated tie-break and final winner: passed",
+      "Desktop and 320px sudden-death score labels, mobile results and no browser exceptions: passed"
+    ],
+    "errors": [],
+    "question_source": "API responses intercepted with supplied local-bank fixtures",
+    "executed_by": "Codex workspace",
+    "captured_at_utc": "2026-10-13T00:26:54.717Z"
+  },
+  "notes": [
+    "Browser API calls use local-bank fixtures; the practice timeout check deliberately returns HTTP 503 to verify fallback.",
+    "This record does not claim teammate acceptance, Product Owner approval, GitHub integration or TA sign-off.",
+    "The earlier TDD PDF retains its original 26-case execution record."
+  ]
+}
