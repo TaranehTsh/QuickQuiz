@@ -12,14 +12,16 @@ export default class Player {
     this.challengeWins = 0
   }
 
-  recordAnswer(isCorrect) {
+  recordAnswer(isCorrect, elapsedSeconds = 0) {
     if (isCorrect) {
-      this.score += 1 // +1 point
+      const pointsAwarded = Math.max(0, 150 - elapsedSeconds * 10)
+      this.score += pointsAwarded
       this.correctCount += 1
-      return
+      return pointsAwarded
     }
 
     this.incorrectCount += 1
+    return 0
   }
 
   recordChallengeWin() {
