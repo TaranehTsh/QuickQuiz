@@ -12,6 +12,7 @@ export default class AnswerRecord {
     this.submittedAnswer = submittedAnswer
     this.isCorrect = Boolean(isCorrect) // developer-Hafsa
     this.timeRemaining = Math.max(0, Number(timeRemaining) || 0) // developer-Tim
+    this.pointsAwarded = 0
   }
 
   getResult() {

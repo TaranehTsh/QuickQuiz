@@ -30,6 +30,20 @@ const playerNames = {
   'player-2': 'Player 2',
 }
 
+function getChallengePoints(gameSession, challenge, playerId) {
+  const questionIds = new Set(
+    challenge
+      .getQuestionsForPlayer(playerId)
+      .map((question) => question.questionId),
+  )
+
+  return gameSession.rounds
+    .filter((round) => round.playerId === playerId)
+    .flatMap((round) => round.answerRecords)
+    .filter((answerRecord) => questionIds.has(answerRecord.questionId))
+    .reduce((total, answerRecord) => total + answerRecord.pointsAwarded, 0)
+}
+
 // builds a fresh 2-player game
 function createGame() {
   const players = [new Player('player-1'), new Player('player-2')]
@@ -443,10 +457,17 @@ function App() {
             <p className="view-description">
               {gameSession.players
                 .map(
-                  (player) =>
-                    `${playerNames[player.playerId]}: ${
-                      challengeOutcome.scores[player.playerId]
-                    }/${QUESTIONS_PER_PLAYER}`,
+                  (player) => {
+                    const bonusPoints = getChallengePoints(
+                      gameSession,
+                      challengeOutcome.challenge,
+                      player.playerId,
+                    )
+
+                    return `${playerNames[player.playerId]}: ${bonusPoints} points, 
+                    ${challengeOutcome.scores[player.playerId] }
+                    /${QUESTIONS_PER_PLAYER} questions correct`
+                  },
                 )
                 .join(' · ')}
             </p>

@@ -81,7 +81,7 @@ export default function AnswerFeedbackView({
           )}
           {isCorrect && (
             <div>
-              One point has been added to your score. The answer is{' '}
+              You earned {feedback.pointsAwarded} points. The answer is{' '}
               <strong>{feedback.correctAnswer}</strong>.
             </div>
           )}
