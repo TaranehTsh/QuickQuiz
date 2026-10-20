@@ -28,6 +28,8 @@ export default function QuizView({
   hintUsedThisRound = false,
   onUseHint,
   onSubmitAnswer,
+  isFavorite = false,
+  onToggleFavorite,
   result, // developer-Hafsa
 }) {
   const [timeRemaining, setTimeRemaining] = useState(timeLimit)
@@ -131,6 +133,15 @@ export default function QuizView({
 
       <p className="view-kicker">Question for {activePlayerName}</p>
       <h2 className="question-prompt">{question.prompt}</h2>
+      <button
+        aria-pressed={isFavorite}
+        className={`favorite-button${isFavorite ? ' favorite-button--saved' : ''}`}
+        onClick={onToggleFavorite}
+        type="button"
+      >
+        <span aria-hidden="true">{isFavorite ? '♥' : '♡'}</span>
+        {isFavorite ? 'Saved to favourites' : 'Save to favourites'}
+      </button>
 
       {/* developer-Taraneh */}
       <div className="hint-row">

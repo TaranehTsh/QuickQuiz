@@ -167,6 +167,26 @@ function App() {
     }
   }
 
+  function handleToggleFavoriteQuestion(question) {
+    const updatedUser = authService.toggleFavoriteQuestion(
+      currentUser.email,
+      {
+        questionId: question.questionId,
+        prompt: question.prompt,
+        categoryId: question.categoryId,
+        categoryName: selectedCategory.name,
+      },
+    )
+    setCurrentUser(updatedUser)
+  }
+
+  function handleRemoveFavoriteQuestion(questionId) {
+    const updatedUser = authService.removeFavoriteQuestion(
+      currentUser.email,
+      questionId,
+    )
+    setCurrentUser(updatedUser)
+  }
 
   function handleStartQuizFromDashboard() {
     setView('category')
@@ -379,10 +399,12 @@ function App() {
           <DashboardView
             user={currentUser}
             quizHistory={authService.getQuizHistory(currentUser.email)}
+            favoriteQuestions={authService.getFavoriteQuestions(currentUser.email)}
             onStartQuiz={handleStartQuizFromDashboard}
             onLogOut={handleLogOut}
             onUpdateUsername={handleUpdateUsername}
             onInstructionsSeen={handleInstructionsSeen}
+            onRemoveFavoriteQuestion={handleRemoveFavoriteQuestion}
           />
         )}
 
@@ -422,6 +444,12 @@ function App() {
             timeLimit={QUESTION_TIME_LIMIT}
             onSubmitAnswer={handleAnswerSubmit}
             result={feedback}
+            isFavorite={authService
+              .getFavoriteQuestions(currentUser.email)
+              .some((favorite) => favorite.questionId === currentQuestion.questionId)}
+            onToggleFavorite={() =>
+              handleToggleFavoriteQuestion(currentQuestion)
+            }
           />
         )}
 

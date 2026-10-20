@@ -265,4 +265,88 @@ export default class AuthService {
     const user = users.find((candidate) => candidate.email === email)
     return user?.quizHistory ?? []
   }
+
+  getFavoriteQuestions(email) {
+    const users = this.getUsers()
+    const user = users.find((candidate) => candidate.email === email)
+
+    if (!user) {
+      return []
+    }
+
+    const favoriteQuestions = user.favoriteQuestions ?? []
+    const sanitizedFavorites = favoriteQuestions.map((favorite) => ({
+      questionId: favorite.questionId,
+      prompt: favorite.prompt,
+      categoryId: favorite.categoryId,
+      categoryName: favorite.categoryName,
+    }))
+    const allowedFields = new Set([
+      'questionId',
+      'prompt',
+      'categoryId',
+      'categoryName',
+    ])
+
+    if (
+      favoriteQuestions.some(
+        (favorite) =>
+          Object.keys(favorite).some((field) => !allowedFields.has(field)),
+      )
+    ) {
+      user.favoriteQuestions = sanitizedFavorites
+      this.saveUsers(users)
+    }
+
+    return sanitizedFavorites
+  }
+
+  toggleFavoriteQuestion(email, question) {
+    const users = this.getUsers()
+    const user = users.find((candidate) => candidate.email === email)
+
+    if (!user) {
+      throw new Error('Account not found.')
+    }
+
+    if (!question?.questionId) {
+      throw new Error('Question requires an id to save as a favourite.')
+    }
+
+    user.favoriteQuestions = user.favoriteQuestions ?? []
+    const alreadySaved = user.favoriteQuestions.some(
+      (favorite) => favorite.questionId === question.questionId,
+    )
+
+    if (alreadySaved) {
+      user.favoriteQuestions = user.favoriteQuestions.filter(
+        (favorite) => favorite.questionId !== question.questionId,
+      )
+    } else {
+      user.favoriteQuestions.push({
+        questionId: question.questionId,
+        prompt: question.prompt,
+        categoryId: question.categoryId,
+        categoryName: question.categoryName,
+      })
+    }
+
+    this.saveUsers(users)
+    return this.toPublicUser(user)
+  }
+
+  removeFavoriteQuestion(email, questionId) {
+    const users = this.getUsers()
+    const user = users.find((candidate) => candidate.email === email)
+
+    if (!user) {
+      throw new Error('Account not found.')
+    }
+
+    user.favoriteQuestions = (user.favoriteQuestions ?? []).filter(
+      (favorite) => favorite.questionId !== questionId,
+    )
+    this.saveUsers(users)
+    return this.toPublicUser(user)
+  }
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import HowToPlayView from './HowToPlayView.jsx'
 
 // developer-Hafsa
@@ -6,13 +6,16 @@ import HowToPlayView from './HowToPlayView.jsx'
 export default function DashboardView({
   user,
   quizHistory,
+  favoriteQuestions,
   onStartQuiz,
   onLogOut,
   onUpdateUsername,
   onInstructionsSeen,
+  onRemoveFavoriteQuestion,
 }) {
   // Sprint 2: ask for confirmation before logging out
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+  const [showFavoriteQuestions, setShowFavoriteQuestions] = useState(false)
   // developer-Taraneh
   // new players see How to play the first time they open the dashboard
   const [showHowToPlay, setShowHowToPlay] = useState(!user.hasSeenInstructions)
@@ -21,6 +24,21 @@ export default function DashboardView({
   const [isEditingUsername, setIsEditingUsername] = useState(false)
   const [usernameInput, setUsernameInput] = useState(user.username)
   const [usernameError, setUsernameError] = useState(null)
+
+  useEffect(() => {
+    if (!showFavoriteQuestions) {
+      return undefined
+    }
+
+    function handleEscape(event) {
+      if (event.key === 'Escape') {
+        setShowFavoriteQuestions(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [showFavoriteQuestions])
 
   function handleConfirmLogOut() {
     setShowLogoutConfirm(false)
@@ -142,6 +160,77 @@ export default function DashboardView({
                 </li>
               ))}
           </ul>
+        )}
+      </div>
+
+      <div className="favorite-questions">
+        <button
+          aria-haspopup="dialog"
+          className="favorite-toggle-button"
+          onClick={() => setShowFavoriteQuestions(true)}
+          type="button"
+        >
+          View favourite questions
+          <span className="favorite-count">{favoriteQuestions.length}</span>
+        </button>
+        {showFavoriteQuestions && (
+          <div
+            className="modal-overlay favorite-modal-overlay"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) {
+                setShowFavoriteQuestions(false)
+              }
+            }}
+          >
+            <div
+              aria-labelledby="favorite-modal-title"
+              aria-modal="true"
+              className="modal-card favorite-modal-card"
+              id="favorite-question-list"
+              role="dialog"
+            >
+              <div className="favorite-modal-heading">
+                <h3 id="favorite-modal-title">Your Favourite Questions</h3>
+                <button
+                  aria-label="Close favourite questions"
+                  autoFocus
+                  className="favorite-modal-close"
+                  onClick={() => setShowFavoriteQuestions(false)}
+                  type="button"
+                >
+                  ×
+                </button>
+              </div>
+              {favoriteQuestions.length === 0 ? (
+                <p className="view-description">
+                  Questions you save during a quiz will appear here.
+                </p>
+              ) : (
+                <ul className="favorite-question-list">
+                  {favoriteQuestions.map((question) => (
+                    <li className="favorite-question" key={question.questionId}>
+                      <div className="favorite-question-heading">
+                        <span className="category-label">
+                          {question.categoryName}
+                        </span>
+                        <button
+                          aria-label={`Remove ${question.prompt} from favourites`}
+                          className="link-button"
+                          onClick={() =>
+                            onRemoveFavoriteQuestion(question.questionId)
+                          }
+                          type="button"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <h4>{question.prompt}</h4>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
         )}
       </div>
 
