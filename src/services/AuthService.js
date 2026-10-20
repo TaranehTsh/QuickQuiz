@@ -254,7 +254,9 @@ export default class AuthService {
     // developer-Taraneh
     // win streak lives on the account so it stays after log out
     const currentStreak = Number(user.winStreak) || 0
-    user.winStreak = resultSummary.won ? currentStreak + 1 : 0
+    if (resultSummary.mode !== 'practice') {
+      user.winStreak = resultSummary.won ? currentStreak + 1 : 0
+    }
 
     this.saveUsers(users)
     return this.toPublicUser(user)

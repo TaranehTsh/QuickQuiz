@@ -7,7 +7,12 @@ export default function ResultsView({ results, playerNames, onRestart }) {
       ? 'The quiz finished in a tie.'
       : `${playerNames[results.winnerPlayerId]} wins the quiz!`
 
-  const rankedPlayers = [...results.players].sort((a, b) => b.score - a.score) // highest score first
+  // A tie-break winner ranks first, including after repeated correct answers
+  // with different speed bonuses. Normal games still rank by total score.
+  const rankedPlayers = [...results.players].sort((a, b) =>
+    Number(b.playerId === results.winnerPlayerId) -
+      Number(a.playerId === results.winnerPlayerId) || b.score - a.score,
+  )
 
   return (
     <div className="view-panel">

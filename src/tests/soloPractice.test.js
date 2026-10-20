@@ -29,7 +29,8 @@ test('S03: a completed practice shows a personal result without a handoff', () =
   const outcome = game.controller.finishActivePlayerTurn()
   assert.equal(outcome.practiceComplete, true)
   assert.equal(game.session.roundState, 'completed')
-  assert.equal(game.results.getFinalResults().players[0].score, 3)
+  assert.equal(game.results.getFinalResults().players[0].score, 300)
+  assert.equal(game.results.getFinalResults().players[0].correctCount, 3)
 })
 
 test('practice never needs sudden death', () => {

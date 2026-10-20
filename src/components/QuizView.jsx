@@ -51,6 +51,7 @@ export default function QuizView({
     if (timeRemaining <= 0) {
       if (!timedOutRef.current) {
         timedOutRef.current = true
+        setLocked(true)
         onSubmitAnswer('', 0) // treat as a missed answer
       }
       return undefined
@@ -65,7 +66,7 @@ export default function QuizView({
 
   function handleAnswer(answer) {
     // hinted answers stay unclickable
-    if (locked || hintedWrongOptions.includes(answer)) {
+    if (locked || timeRemaining <= 0 || hintedWrongOptions.includes(answer)) {
       return
     }
 
@@ -76,7 +77,7 @@ export default function QuizView({
   // developer-Taraneh
   // one hint per round (this player's 3 questions)
   function handleHint() {
-    if (locked || hintUsed) {
+    if (locked || timeRemaining <= 0 || hintUsed) {
       return
     }
 
@@ -141,7 +142,7 @@ export default function QuizView({
         <button
           aria-label={hintUsed ? 'Hint already used this round' : 'Use hint'}
           className={`hint-button${hintUsed || locked ? ' hint-button--used' : ''}`}
-          disabled={locked || hintUsed}
+          disabled={locked || timeRemaining <= 0 || hintUsed}
           onClick={handleHint}
           type="button"
         >
@@ -162,7 +163,7 @@ export default function QuizView({
         {question.options.map((option) => (
           <button
             className={getButtonClass(option)}
-            disabled={locked || hintedWrongOptions.includes(option)}
+            disabled={locked || timeRemaining <= 0 || hintedWrongOptions.includes(option)}
             key={option}
             onClick={() => handleAnswer(option)}
             type="button"

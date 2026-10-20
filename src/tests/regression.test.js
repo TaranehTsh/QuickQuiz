@@ -49,7 +49,8 @@ test('an answer can be recorded only once and the other player cannot submit', (
   assert.throws(() => game.controller.checkAnswer('player-2', questions[0].correctAnswer, 10), /active player/)
   game.controller.checkAnswer('player-1', questions[0].correctAnswer, 10)
   assert.throws(() => game.controller.checkAnswer('player-1', questions[0].correctAnswer, 10), /already been answered/)
-  assert.equal(game.session.players[0].score, 1)
+  assert.equal(game.session.players[0].score, 100)
+  assert.equal(game.session.players[0].correctCount, 1)
 })
 
 test('a new game resets scores and keeps the requested player count', () => {

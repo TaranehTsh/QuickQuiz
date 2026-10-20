@@ -3,7 +3,17 @@ import HowToPlayView from './HowToPlayView.jsx'
 
 // developer-Hafsa
 // logged-in home screen and past quiz scores
-export default function DashboardView({ user, quizHistory, onStartQuiz, onStartPractice, onLogOut }) {
+export default function DashboardView({
+  user,
+  quizHistory,
+  favoriteQuestions = [],
+  onStartQuiz,
+  onStartPractice,
+  onLogOut,
+  onUpdateUsername,
+  onInstructionsSeen,
+  onRemoveFavoriteQuestion,
+}) {
   // Sprint 2: ask for confirmation before logging out
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   const [showFavoriteQuestions, setShowFavoriteQuestions] = useState(false)
@@ -122,6 +132,10 @@ export default function DashboardView({ user, quizHistory, onStartQuiz, onStartP
           </button>
         )}
       </div>
+
+      <p className="view-description" role="status" aria-label="Win streak">
+        Win streak: <strong>{user.winStreak ?? 0}</strong>
+      </p>
 
       <button className="primary-button" onClick={onStartQuiz} type="button">
         Start New Quiz

@@ -116,3 +116,18 @@ test('continuing twice cannot submit player one’s answer for player two', () =
   game.controller.checkAnswer('player-2', '', 0)
   assert.equal(game.controller.finishSuddenDeathTurn().winnerId, 'player-1')
 })
+
+test('both correct with different speed bonuses can still continue sudden death', () => {
+  const game = makeGame()
+  completeNormalGame(game)
+  const question = game.repository.getQuestion('general')
+  game.controller.startSuddenDeath(question)
+  game.controller.checkAnswer('player-1', question.correctAnswer, 15)
+  game.controller.finishSuddenDeathTurn()
+  game.controller.startSuddenDeathTurn()
+  game.controller.checkAnswer('player-2', question.correctAnswer, 10)
+  assert.equal(game.controller.finishSuddenDeathTurn().state, 'repeat')
+  assert.notEqual(game.session.players[0].score, game.session.players[1].score)
+  assert.doesNotThrow(() => game.controller.startSuddenDeath(game.repository.getQuestion('science')))
+  assert.equal(game.session.suddenDeath.roundNumber, 2)
+})

@@ -9,7 +9,6 @@ import LoginView from './components/LoginView.jsx'
 import ResetPasswordView from './components/ResetPasswordView.jsx'
 import DashboardView from './components/DashboardView.jsx'
 import createGame from './createGame.js'
-import recordPracticeResult from './services/PracticeHistoryService.js'
 import {
   CHALLENGES_PER_GAME,
   QUESTIONS_PER_CATEGORY_SET,
@@ -32,6 +31,10 @@ function App() {
   const [game, setGame] = useState(createGame)
   // developer-Hafsa
   const [authService] = useState(() => new AuthService())
+  const [soundEffects] = useState(() => new SoundEffectService({
+    correctUrl: correctSoundUrl,
+    incorrectUrl: incorrectSoundUrl,
+  }))
   const [currentUser, setCurrentUser] = useState(() => authService.getCurrentUser())
   const [view, setView] = useState(() =>
     authService.getCurrentUser() ? 'dashboard' : 'login',
@@ -85,6 +88,44 @@ function App() {
     setView('login')
   }
 
+  function handleFindAccount(email) {
+    return authService.getSecurityQuestion(email)
+  }
+
+  function handleResetPassword(email, answer, newPassword) {
+    authService.resetPassword(email, answer, newPassword)
+  }
+
+  function handleUpdateUsername(username) {
+    setCurrentUser(authService.updateUsername(currentUser.email, username))
+  }
+
+  function handleInstructionsSeen() {
+    setCurrentUser(authService.markInstructionsSeen(currentUser.email))
+  }
+
+  function handleToggleFavoriteQuestion(question) {
+    setCurrentUser(authService.toggleFavoriteQuestion(currentUser.email, {
+      questionId: question.questionId,
+      prompt: question.prompt,
+      categoryId: question.categoryId,
+      categoryName: game.repository.getCategory(question.categoryId).name,
+    }))
+  }
+
+  function handleRemoveFavoriteQuestion(questionId) {
+    setCurrentUser(authService.removeFavoriteQuestion(currentUser.email, questionId))
+  }
+
+  function getChallengePoints(session, challenge, playerId) {
+    // A challenge has two consecutive rounds, even when a category is reused.
+    return session.rounds
+      .slice((challenge.challengeNumber - 1) * 2, challenge.challengeNumber * 2)
+      .filter((round) => round.playerId === playerId)
+      .flatMap((round) => round.answerRecords)
+      .reduce((total, record) => total + record.pointsAwarded, 0)
+  }
+
   // developer-Leon: start each mode with fresh scores and state.
   function resetGame(mode = 'versus') {
     loadRequest.current += 1
@@ -134,16 +175,12 @@ function App() {
     setFinalResults(results)
     if (currentUser) {
       const me = results.players.find((player) => player.playerId === 'player-1')
-      // developer-Leon: practice has no competitive outcome and must not
-      // reset the account's competitive win streak.
-      const updatedUser = results.mode === 'practice'
-        ? recordPracticeResult(authService, currentUser.email, me?.score ?? 0)
-        : authService.recordQuizResult(currentUser.email, {
-          mode: results.mode,
-          score: me?.score ?? 0,
-          won: results.winnerPlayerId === 'player-1',
-          isTie: results.isTie,
-        })
+      const updatedUser = authService.recordQuizResult(currentUser.email, {
+        mode: results.mode,
+        score: me?.score ?? 0,
+        won: results.mode === 'versus' && results.winnerPlayerId === 'player-1',
+        isTie: results.isTie,
+      })
       if (updatedUser) setCurrentUser(updatedUser)
     }
     setView('results')
@@ -351,6 +388,7 @@ function App() {
           <DashboardView
             user={currentUser}
             quizHistory={authService.getQuizHistory(currentUser.email)}
+            favoriteQuestions={authService.getFavoriteQuestions(currentUser.email)}
             onStartQuiz={() => handleStartQuizFromDashboard('versus')}
             onStartPractice={() => handleStartQuizFromDashboard('practice')}
             onLogOut={handleLogOut}
