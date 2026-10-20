@@ -37,7 +37,12 @@ export default class GameSession {
   }
 
   startSuddenDeath(question) {
-    if (!this.needsSuddenDeath()) {
+    // developer-Leon: equal correctness repeats the tie-break even when
+    // speed bonuses from that question make the running scores different.
+    const repeatingTieBreak = this.mode === 'versus' &&
+      this.isGameComplete(CHALLENGES_PER_GAME) &&
+      this.suddenDeath?.getOutcome().state === 'repeat'
+    if (!this.needsSuddenDeath() && !repeatingTieBreak) {
       throw new Error('Sudden death requires a completed tied game.')
     }
     if (this.suddenDeath?.getOutcome().state === 'waiting') {

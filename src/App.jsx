@@ -9,6 +9,7 @@ import LoginView from './components/LoginView.jsx'
 import ResetPasswordView from './components/ResetPasswordView.jsx'
 import DashboardView from './components/DashboardView.jsx'
 import createGame from './createGame.js'
+import recordPracticeResult from './services/PracticeHistoryService.js'
 import {
   CHALLENGES_PER_GAME,
   QUESTIONS_PER_CATEGORY_SET,
@@ -133,12 +134,17 @@ function App() {
     setFinalResults(results)
     if (currentUser) {
       const me = results.players.find((player) => player.playerId === 'player-1')
-      authService.recordQuizResult(currentUser.email, {
-        mode: results.mode,
-        score: me?.score ?? 0,
-        won: results.mode === 'versus' && results.winnerPlayerId === 'player-1',
-        isTie: results.isTie,
-      })
+      // developer-Leon: practice has no competitive outcome and must not
+      // reset the account's competitive win streak.
+      const updatedUser = results.mode === 'practice'
+        ? recordPracticeResult(authService, currentUser.email, me?.score ?? 0)
+        : authService.recordQuizResult(currentUser.email, {
+          mode: results.mode,
+          score: me?.score ?? 0,
+          won: results.winnerPlayerId === 'player-1',
+          isTie: results.isTie,
+        })
+      if (updatedUser) setCurrentUser(updatedUser)
     }
     setView('results')
   }
@@ -190,14 +196,14 @@ function App() {
     // developer-Will
     // right answer plays the happy sound
     // wrong answer, or no time left, plays the sad sound
-    soundEffects.playAnswerSound(answerResult.isCorrect)
-
     setFeedback(answerResult)
     if (gameSession.suddenDeath) {
       // Keep the answer private until the other player has answered.
       setView('sudden-death-saved')
       return
     }
+
+    soundEffects.playAnswerSound(answerResult.isCorrect)
 
     // developer-Hafsa
     window.setTimeout(() => {
