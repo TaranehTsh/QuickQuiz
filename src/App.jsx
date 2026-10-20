@@ -24,6 +24,11 @@ import QuizApiQuestionService from './services/QuizApiQuestionService.js'
 import PlayerResults from './services/PlayerResults.js'
 import ResultsService from './services/ResultsService.js'
 import AuthService from './services/AuthService.js'
+// developer-Will
+// these are the two sound files, the happy one and the sad one
+import correctSoundUrl from './assets/audio/Correct.mp3'
+import incorrectSoundUrl from './assets/audio/Incorrect.mp3'
+import SoundEffectService from './services/SoundEffectService.js'
 
 const playerNames = {
   'player-1': 'Player 1',
@@ -71,6 +76,15 @@ function App() {
   const [finalResults, setFinalResults] = useState(null)
   // developer-Taraneh
   const [flaggedQuestionIds, setFlaggedQuestionIds] = useState([])
+  // developer-Will
+  // this holds the sound player, we make it one time and keep it
+  const [soundEffects] = useState(
+    () =>
+      new SoundEffectService({
+        correctUrl: correctSoundUrl,
+        incorrectUrl: incorrectSoundUrl,
+      }),
+  )
 
   const { gameSession } = game
   const activePlayer = gameSession.getActivePlayer()
@@ -187,6 +201,11 @@ function App() {
       answer,
       timeRemaining,
     )
+
+    // developer-Will
+    // right answer plays the happy sound
+    // wrong answer, or no time left, plays the sad sound
+    soundEffects.playAnswerSound(answerResult.isCorrect)
 
     setFeedback(answerResult)
 
