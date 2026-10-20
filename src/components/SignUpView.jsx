@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { SECURITY_QUESTIONS } from '../services/AuthService.js'
 
 // developer-Hafsa
 // create an account so quiz history can be saved
@@ -6,13 +7,16 @@ export default function SignUpView({ onSignUp, onSwitchToLogin }) {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  // Sprint 2: used to prove it's really you when resetting a password
+  const [securityQuestion, setSecurityQuestion] = useState('')
+  const [securityAnswer, setSecurityAnswer] = useState('')
   const [error, setError] = useState(null)
 
   function handleSubmit(event) {
     event.preventDefault()
 
     try {
-      onSignUp({ username, email, password })
+      onSignUp({ username, email, password, securityQuestion, securityAnswer })
     } catch (err) {
       setError(err.message)
     }
@@ -58,6 +62,37 @@ export default function SignUpView({ onSignUp, onSwitchToLogin }) {
             value={password}
           />
         </label>
+
+        <label className="form-field">
+          Security question
+          <select
+            onChange={(event) => setSecurityQuestion(event.target.value)}
+            required
+            value={securityQuestion}
+          >
+            <option disabled value="">
+              Choose a question
+            </option>
+            {SECURITY_QUESTIONS.map((question) => (
+              <option key={question} value={question}>
+                {question}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="form-field">
+          Your answer
+          <input
+            onChange={(event) => setSecurityAnswer(event.target.value)}
+            required
+            type="text"
+            value={securityAnswer}
+          />
+        </label>
+        <p className="view-description">
+          You will need this answer if you ever forget your password.
+        </p>
 
         {error && <p className="form-error">{error}</p>}
 

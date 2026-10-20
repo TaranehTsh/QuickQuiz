@@ -204,6 +204,16 @@ button {
   font-size: 0.9rem;
 }
 
+/* developer-Will */
+/* the random button sits under the other buttons and is as wide as them */
+.random-category-button {
+  /* the stripe and the dot show all four category colours mixed together */
+  --category-colour: linear-gradient(135deg, #377cf6, #16a673, #7b52df, #ef7b2d);
+  width: 100%;
+  min-height: 110px;
+  margin-top: 16px;
+}
+
 .quiz-meta {
   display: flex;
   align-items: center;
@@ -282,6 +292,38 @@ button {
   font-size: clamp(1.5rem, 4vw, 2.35rem);
   line-height: 1.28;
   letter-spacing: -0.025em;
+}
+
+.favorite-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 42px;
+  margin: -12px 0 24px;
+  padding: 9px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.favorite-button span {
+  color: var(--danger);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.favorite-button--saved {
+  border-color: #f3c8cc;
+  background: #fff4f5;
+  color: #9e2732;
+}
+
+.favorite-button:focus-visible {
+  outline: 4px solid rgba(91, 92, 226, 0.25);
+  outline-offset: 3px;
 }
 
 .answer-grid {
@@ -549,6 +591,54 @@ button {
 .answer-button.disabled {
   transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
+
+/* developer-Taraneh */
+/* hint button and the two wrong answers it marks red */
+.hint-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+.hint-button {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 2px solid #e6b800;
+  border-radius: 14px;
+  background: #fff4b8;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.hint-button:hover:not(:disabled) {
+  background: #ffe566;
+}
+
+/* grey when the hint is already used this round */
+.hint-button--used,
+.hint-button:disabled {
+  cursor: default;
+  background: #e4e7ee;
+  border-color: #b8becc;
+  opacity: 1;
+}
+
+.hint-status {
+  margin: 0;
+  color: #5b5f7a;
+  font-size: 0.9rem;
+}
+
+.answer-button.hint-wrong {
+  background-color: #f8d7da;
+  border-color: #dc3545;
+  color: #721c24;
+  opacity: 0.7;
+}
 /* developer-Hafsa */
 /* === Additions for auth (SignUp/Login/Dashboard) === */
 .auth-form {
@@ -606,6 +696,131 @@ button {
   padding: 8px 0;
   border-bottom: 1px solid #eee;
   font-size: 14px;
+}
+
+.favorite-questions {
+  margin-top: 24px;
+  text-align: left;
+}
+
+.favorite-toggle-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 9px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.favorite-toggle-button:hover {
+  border-color: var(--primary);
+}
+
+.favorite-toggle-button:focus-visible {
+  outline: 4px solid rgba(91, 92, 226, 0.25);
+  outline-offset: 3px;
+}
+
+.favorite-count {
+  display: grid;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  place-items: center;
+  border-radius: 999px;
+  background: #eef0ff;
+  color: var(--primary-dark);
+  font-size: 0.82rem;
+}
+
+.favorite-modal-overlay {
+  padding: 20px;
+}
+
+.favorite-modal-card {
+  display: flex;
+  flex-direction: column;
+  max-width: 620px;
+  max-height: min(80vh, 720px);
+  text-align: left;
+}
+
+.favorite-modal-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.favorite-modal-heading h3 {
+  margin: 0;
+}
+
+.favorite-modal-close {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: #f3f4f8;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.favorite-modal-close:focus-visible {
+  outline: 4px solid rgba(91, 92, 226, 0.25);
+  outline-offset: 2px;
+}
+
+.favorite-question-list {
+  display: grid;
+  gap: 8px;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.favorite-question {
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fbfbff;
+}
+
+.favorite-question-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.favorite-question-heading .category-label {
+  font-size: 0.82rem;
+}
+
+.favorite-question-heading .link-button {
+  flex: 0 0 auto;
+  margin-top: 0;
+  font-size: 0.82rem;
+}
+
+.favorite-question h4 {
+  margin: 4px 0 0;
+  color: var(--ink);
+  font-size: 0.95rem;
+  line-height: 1.35;
 }
 
 /* developer-Taraneh */

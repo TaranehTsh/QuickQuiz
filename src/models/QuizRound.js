@@ -20,6 +20,17 @@ export default class QuizRound {
     this.questions = [...questions]
     this.currentQuestionIndex = -1 // nothing started yet
     this.answerRecords = []
+    this.hintUsed = false // developer-Taraneh — one hint for this player's 3 questions
+  }
+
+  // developer-Taraneh
+  useHint() {
+    if (this.hintUsed) {
+      return false
+    }
+
+    this.hintUsed = true
+    return true
   }
 
   startQuestion() {

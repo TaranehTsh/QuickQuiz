@@ -1,21 +1,126 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import HowToPlayView from './HowToPlayView.jsx'
 
 // developer-Hafsa
 // logged-in home screen and past quiz scores
 export default function DashboardView({ user, quizHistory, onStartQuiz, onStartPractice, onLogOut }) {
   // Sprint 2: ask for confirmation before logging out
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+  const [showFavoriteQuestions, setShowFavoriteQuestions] = useState(false)
+  // developer-Taraneh
+  // new players see How to play the first time they open the dashboard
+  const [showHowToPlay, setShowHowToPlay] = useState(!user.hasSeenInstructions)
+
+  // Sprint 2: edit username
+  const [isEditingUsername, setIsEditingUsername] = useState(false)
+  const [usernameInput, setUsernameInput] = useState(user.username)
+  const [usernameError, setUsernameError] = useState(null)
+
+  useEffect(() => {
+    if (!showFavoriteQuestions) {
+      return undefined
+    }
+
+    function handleEscape(event) {
+      if (event.key === 'Escape') {
+        setShowFavoriteQuestions(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [showFavoriteQuestions])
 
   function handleConfirmLogOut() {
     setShowLogoutConfirm(false)
     onLogOut()
   }
 
+  function handleStartEditing() {
+    setUsernameInput(user.username)
+    setUsernameError(null)
+    setIsEditingUsername(true)
+  }
+
+  function handleCancelEditing() {
+    setUsernameError(null)
+    setIsEditingUsername(false)
+  }
+
+  function handleSaveUsername(event) {
+    event.preventDefault()
+
+    // Empty (or spaces-only) names are rejected and nothing is saved
+    if (!usernameInput.trim()) {
+      setUsernameError('Username cannot be empty.')
+      return
+    }
+
+    try {
+      onUpdateUsername(usernameInput)
+      setUsernameError(null)
+      setIsEditingUsername(false)
+    } catch (err) {
+      setUsernameError(err.message)
+    }
+  }
+
   return (
     <div className="view-panel">
       <div className="view-heading">
-        <p className="view-kicker">Welcome back</p>
-        <h2>{user.username}&apos;s Dashboard</h2>
+        <div className="dashboard-heading-row">
+          <div>
+            <p className="view-kicker">Welcome back</p>
+            <h2>{user.username}&apos;s Dashboard</h2>
+          </div>
+          {/* developer-Taraneh */}
+          <button
+            aria-label="How to play"
+            className="help-icon-button"
+            onClick={() => setShowHowToPlay(true)}
+            title="How to play"
+            type="button"
+          >
+            ?
+          </button>
+        </div>
+
+        {isEditingUsername ? (
+          <form className="edit-username-form" onSubmit={handleSaveUsername}>
+            <label className="form-field">
+              New username
+              <input
+                maxLength={30}
+                onChange={(event) => setUsernameInput(event.target.value)}
+                type="text"
+                value={usernameInput}
+              />
+            </label>
+
+            {usernameError && <p className="form-error">{usernameError}</p>}
+
+            <div className="edit-username-actions">
+              <button className="primary-button" type="submit">
+                Save
+              </button>
+              <button
+                className="secondary-button"
+                onClick={handleCancelEditing}
+                type="button"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : (
+          <button
+            className="link-button"
+            onClick={handleStartEditing}
+            type="button"
+          >
+            Edit username
+          </button>
+        )}
       </div>
 
       <button className="primary-button" onClick={onStartQuiz} type="button">
@@ -49,6 +154,77 @@ export default function DashboardView({ user, quizHistory, onStartQuiz, onStartP
         )}
       </div>
 
+      <div className="favorite-questions">
+        <button
+          aria-haspopup="dialog"
+          className="favorite-toggle-button"
+          onClick={() => setShowFavoriteQuestions(true)}
+          type="button"
+        >
+          View favourite questions
+          <span className="favorite-count">{favoriteQuestions.length}</span>
+        </button>
+        {showFavoriteQuestions && (
+          <div
+            className="modal-overlay favorite-modal-overlay"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) {
+                setShowFavoriteQuestions(false)
+              }
+            }}
+          >
+            <div
+              aria-labelledby="favorite-modal-title"
+              aria-modal="true"
+              className="modal-card favorite-modal-card"
+              id="favorite-question-list"
+              role="dialog"
+            >
+              <div className="favorite-modal-heading">
+                <h3 id="favorite-modal-title">Your Favourite Questions</h3>
+                <button
+                  aria-label="Close favourite questions"
+                  autoFocus
+                  className="favorite-modal-close"
+                  onClick={() => setShowFavoriteQuestions(false)}
+                  type="button"
+                >
+                  ×
+                </button>
+              </div>
+              {favoriteQuestions.length === 0 ? (
+                <p className="view-description">
+                  Questions you save during a quiz will appear here.
+                </p>
+              ) : (
+                <ul className="favorite-question-list">
+                  {favoriteQuestions.map((question) => (
+                    <li className="favorite-question" key={question.questionId}>
+                      <div className="favorite-question-heading">
+                        <span className="category-label">
+                          {question.categoryName}
+                        </span>
+                        <button
+                          aria-label={`Remove ${question.prompt} from favourites`}
+                          className="link-button"
+                          onClick={() =>
+                            onRemoveFavoriteQuestion(question.questionId)
+                          }
+                          type="button"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <h4>{question.prompt}</h4>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
       <button
         className="link-button"
         onClick={() => setShowLogoutConfirm(true)}
@@ -56,6 +232,15 @@ export default function DashboardView({ user, quizHistory, onStartQuiz, onStartP
       >
         Log out
       </button>
+
+      {showHowToPlay && (
+        <HowToPlayView
+          onClose={() => {
+            setShowHowToPlay(false)
+            onInstructionsSeen?.()
+          }}
+        />
+      )}
 
       {showLogoutConfirm && (
         <div className="modal-overlay">

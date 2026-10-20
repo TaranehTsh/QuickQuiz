@@ -6,6 +6,7 @@ import QuizView from './components/QuizView.jsx'
 import ResultsView from './components/ResultsView.jsx'
 import SignUpView from './components/SignUpView.jsx'
 import LoginView from './components/LoginView.jsx'
+import ResetPasswordView from './components/ResetPasswordView.jsx'
 import DashboardView from './components/DashboardView.jsx'
 import createGame from './createGame.js'
 import {
@@ -15,6 +16,11 @@ import {
   QUESTION_TIME_LIMIT,
 } from './gameConfig.js'
 import AuthService from './services/AuthService.js'
+// developer-Will
+// these are the two sound files, the happy one and the sad one
+import correctSoundUrl from './assets/audio/Correct.mp3'
+import incorrectSoundUrl from './assets/audio/Incorrect.mp3'
+import SoundEffectService from './services/SoundEffectService.js'
 
 const playerNames = {
   'player-1': 'Player 1',
@@ -53,7 +59,11 @@ function App() {
       ? currentRound.currentQuestionIndex + 1
       : 1
 
-  const inAuthFlow = view === 'login' || view === 'signup' || view === 'dashboard'
+  const inAuthFlow =
+   view === 'login' ||
+   view === 'signup' ||
+   view === 'dashboard' ||
+   view === 'reset-password'
 
   // developer-Hafsa
   function handleSignUp(details) {
@@ -159,12 +169,28 @@ function App() {
     }
   }
 
+  // developer-Will
+  // player wants a surprise, so we pick a category by luck
+  function handleRandomCategorySelect() {
+    // ask the controller to pick one category for us
+    const randomCategoryId = game.turnController.pickRandomCategoryId()
+
+    // now do the very same steps as when a player taps a category button
+    // so the questions come from the category that was picked
+    handleCategorySelect(randomCategoryId)
+  }
+
   function handleAnswerSubmit(answer, timeRemaining) {
     const answerResult = game.quizController.checkAnswer(
       gameSession.activePlayerId,
       answer,
       timeRemaining,
     )
+
+    // developer-Will
+    // right answer plays the happy sound
+    // wrong answer, or no time left, plays the sad sound
+    soundEffects.playAnswerSound(answerResult.isCorrect)
 
     setFeedback(answerResult)
     if (gameSession.suddenDeath) {
@@ -296,10 +322,21 @@ function App() {
       <section className="game-stage">
         {loadError && <p className="view-description" role="alert">{loadError}</p>}
         {/* developer-Hafsa */}
-        {view === 'login' && (
-          <LoginView onLogIn={handleLogIn} onSwitchToSignUp={() => setView('signup')} />
-        )}
+                 {view === 'login' && (
+             <LoginView
+               onLogIn={handleLogIn}
+               onSwitchToSignUp={() => setView('signup')}
+               onForgotPassword={() => setView('reset-password')}
+             />
+           )}
 
+           {view === 'reset-password' && (
+             <ResetPasswordView
+               onFindAccount={handleFindAccount}
+               onResetPassword={handleResetPassword}
+               onBackToLogin={() => setView('login')}
+             />
+           )}
         {view === 'signup' && (
           <SignUpView onSignUp={handleSignUp} onSwitchToLogin={() => setView('login')} />
         )}
@@ -311,6 +348,9 @@ function App() {
             onStartQuiz={() => handleStartQuizFromDashboard('versus')}
             onStartPractice={() => handleStartQuizFromDashboard('practice')}
             onLogOut={handleLogOut}
+            onUpdateUsername={handleUpdateUsername}
+            onInstructionsSeen={handleInstructionsSeen}
+            onRemoveFavoriteQuestion={handleRemoveFavoriteQuestion}
           />
         )}
 
@@ -320,6 +360,7 @@ function App() {
             activePlayerName={playerNames[activePlayer.playerId]}
             categories={game.repository.getCategories()}
             onSelectCategory={handleCategorySelect}
+            onSelectRandomCategory={handleRandomCategorySelect}
           />
         )}
 
@@ -344,10 +385,18 @@ function App() {
             hideFeedback={Boolean(gameSession.suddenDeath)}
             activePlayerName={playerNames[activePlayer.playerId]}
             category={selectedCategory}
+            hintUsedThisRound={Boolean(currentRound?.hintUsed)}
+            onUseHint={() => currentRound?.useHint()}
             question={currentQuestion}
             timeLimit={QUESTION_TIME_LIMIT}
             onSubmitAnswer={handleAnswerSubmit}
             result={feedback}
+            isFavorite={authService
+              .getFavoriteQuestions(currentUser.email)
+              .some((favorite) => favorite.questionId === currentQuestion.questionId)}
+            onToggleFavorite={() =>
+              handleToggleFavoriteQuestion(currentQuestion)
+            }
           />
         )}
 
@@ -402,10 +451,17 @@ function App() {
             <p className="view-description">
               {gameSession.players
                 .map(
-                  (player) =>
-                    `${playerNames[player.playerId]}: ${
-                      challengeOutcome.scores[player.playerId]
-                    }/${QUESTIONS_PER_PLAYER}`,
+                  (player) => {
+                    const bonusPoints = getChallengePoints(
+                      gameSession,
+                      challengeOutcome.challenge,
+                      player.playerId,
+                    )
+
+                    return `${playerNames[player.playerId]}: ${bonusPoints} points, 
+                    ${challengeOutcome.scores[player.playerId] }
+                    /${QUESTIONS_PER_PLAYER} questions correct`
+                  },
                 )
                 .join(' · ')}
             </p>

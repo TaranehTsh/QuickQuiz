@@ -185,13 +185,25 @@ export default class QuizAndTimerController {
     const answerRecord = round.submitAnswer(submittedAnswer, remaining)
     const player = this.gameSession.getPlayer(playerId)
 
-    player.recordAnswer(validation.isCorrect)
+    const elapsedSeconds = Math.max(
+      0,
+      round.timeLimitSeconds - Math.min(
+        answerRecord.timeRemaining,
+        round.timeLimitSeconds,
+      ),
+    )
+    const pointsAwarded = player.recordAnswer(
+      validation.isCorrect,
+      elapsedSeconds,
+    )
+    answerRecord.pointsAwarded = pointsAwarded
     this.playerResults.recordAnswer(answerRecord)
     this.gameSession.roundState = 'feedback'
 
     return {
       answerRecord,
       isCorrect: validation.isCorrect,
+      pointsAwarded,
       correctAnswer: validation.correctAnswer,
       submittedAnswer: submittedAnswer || null,
       timedOut: remaining === 0, // developer-Tim

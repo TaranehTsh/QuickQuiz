@@ -4,6 +4,7 @@ export default function CategorySelectionView({
   activePlayerName,
   categories,
   onSelectCategory,
+  onSelectRandomCategory,
 }) {
   return (
     <div className="view-panel">
@@ -31,6 +32,18 @@ export default function CategorySelectionView({
           </button>
         ))}
       </div>
+
+      {/* developer-Will */}
+      {/* this button picks a category for you, so you do not have to choose */}
+      <button
+        className="category-button random-category-button"
+        onClick={() => onSelectRandomCategory()}
+        type="button"
+      >
+        <span className="category-dot" aria-hidden="true" />
+        <strong>Random Category</strong>
+        <small>Let the game pick one for me</small>
+      </button>
     </div>
   )
 }

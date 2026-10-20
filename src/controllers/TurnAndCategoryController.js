@@ -23,6 +23,24 @@ export default class TurnAndCategoryController {
     }
   }
 
+  // developer-Will
+  // this picks one category by luck and gives back its id
+  pickRandomCategoryId() {
+    // get the list of every category we have
+    const categories = this.repository.getCategories()
+
+    // if the list is empty there is nothing to pick
+    if (categories.length === 0) {
+      throw new Error('There are no categories to pick from.')
+    }
+
+    // pick a spot number by luck, from the first spot to the last spot
+    const spot = Math.floor(Math.random() * categories.length)
+
+    // give back the id of the category sitting in that spot
+    return categories[spot].categoryId
+  }
+
   // developer-Taraneh
   startNextChooserTurn() {
     this.gameSession.rotateChooser()
