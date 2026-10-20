@@ -1,0 +1,39 @@
+✔ T01: a completed tied game requires sudden death (1.054554ms)
+✖ T02: only player one correct gives player one the win (1.566408ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 85.681209
+
+✖ failing tests:
+
+test at src/tests/suddenDeath.test.js:12:1
+✖ T02: only player one correct gives player one the win (1.566408ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   state: 'waiting',
+  +   winnerId: null
+  -   state: 'winner',
+  -   winnerId: 'player-1'
+    }
+  
+      at TestContext.<anonymous> (file:///tmp/quickquiz-tdd-lldLPK/src/tests/suddenDeath.test.js:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { state: 'waiting', winnerId: null },
+    expected: { state: 'winner', winnerId: 'player-1' },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

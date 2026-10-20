@@ -1,16 +1,23 @@
 import Challenge from './Challenge.js'
+import SuddenDeathRound from './SuddenDeathRound.js'
+import { CHALLENGES_PER_GAME } from '../gameConfig.js'
 
-// holds the current 2-player game: whose turn, category, scores
+// holds a two-player game or a single-player practice session
 export default class GameSession {
-  constructor(sessionId, players) {
+  constructor(sessionId, players, mode = 'versus') {
     if (!sessionId) {
       throw new Error('GameSession requires a sessionId.')
     }
 
-    if (!Array.isArray(players) || players.length !== 2) {
-      throw new Error('GameSession requires exactly two players.')
+    if (!['versus', 'practice'].includes(mode)) {
+      throw new Error('Unknown game mode.')
+    }
+    const requiredPlayers = mode === 'practice' ? 1 : 2
+    if (!Array.isArray(players) || players.length !== requiredPlayers) {
+      throw new Error(`GameSession requires exactly ${requiredPlayers} players.`)
     }
 
+    this.mode = mode // developer-Leon
     this.sessionId = sessionId
     this.players = [...players]
     this.activePlayerId = players[0].playerId // who is answering right now
@@ -20,6 +27,27 @@ export default class GameSession {
     this.rounds = []
     this.challenges = [] // each challenge = one category, 3 questions each
     this.currentChallenge = null
+    this.suddenDeath = null // developer-Leon
+  }
+
+  // developer-Leon: only a completed two-player game can need a tie-break.
+  needsSuddenDeath(totalChallenges = CHALLENGES_PER_GAME) {
+    return this.mode === 'versus' && this.isGameComplete(totalChallenges) &&
+      this.players[0].getScore() === this.players[1].getScore()
+  }
+
+  startSuddenDeath(question) {
+    if (!this.needsSuddenDeath()) {
+      throw new Error('Sudden death requires a completed tied game.')
+    }
+    if (this.suddenDeath?.getOutcome().state === 'waiting') {
+      throw new Error('Finish the current sudden-death question first.')
+    }
+    const number = (this.suddenDeath?.roundNumber ?? 0) + 1
+    this.suddenDeath = new SuddenDeathRound(this.players, question, number)
+    this.activePlayerId = this.players[0].playerId
+    this.selectedCategoryId = question.categoryId
+    this.roundState = 'sudden-death'
   }
 
   getPlayer(playerId) {
@@ -127,6 +155,7 @@ export default class GameSession {
   }
 
   isGameComplete(totalChallenges) {
+    if (this.mode === 'practice') return Boolean(this.getCurrentRound()?.isComplete())
     const lastChallenge = this.challenges.at(-1)
 
     return (

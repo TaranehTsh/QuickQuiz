@@ -1,0 +1,13 @@
+{
+  "results": [
+    "Demo login and dashboard: passed",
+    "Existing logout confirmation/cancel: passed",
+    "Solo practice entry, 3 questions, timer, feedback, personal result and practice history: passed",
+    "Two-player turns, completed tie, hidden answers, repeated tie-break and final winner: passed",
+    "Mobile result layout and no browser exceptions: passed"
+  ],
+  "errors": [],
+  "question_source": "API responses intercepted with supplied local-bank fixtures",
+  "executed_by": "Codex workspace",
+  "captured_at_utc": "2026-10-12T22:22:32.498Z"
+}
