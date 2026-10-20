@@ -1,22 +1,29 @@
 // developer-Will
 export default function ResultsView({ results, playerNames, onRestart }) {
-  const summary = results.isTie
-    ? 'The quiz finished in a tie.'
-    : `${playerNames[results.winnerPlayerId]} wins the quiz!`
+  const isPractice = results.mode === 'practice'
+  const summary = isPractice
+    ? 'Practice complete. Try another category to keep improving!'
+    : results.isTie
+      ? 'The quiz finished in a tie.'
+      : `${playerNames[results.winnerPlayerId]} wins the quiz!`
 
   const rankedPlayers = [...results.players].sort((a, b) => b.score - a.score) // highest score first
 
   return (
     <div className="view-panel">
       <header className="results-header">
-        <p className="view-kicker">Final results</p>
-        <h2>Performance comparison</h2>
-        <p>Compare both players&apos; scores, accuracy, strengths and weaknesses.</p>
+        <p className="view-kicker">{isPractice ? 'Solo Practice' : 'Final results'}</p>
+        <h2>{isPractice ? 'Your practice results' : 'Performance comparison'}</h2>
+        <p>{isPractice ? 'Review your score and accuracy.' : 'Compare both players\u2019 scores, accuracy, strengths and weaknesses.'}</p>
       </header>
 
       <div className="result-summary">{summary}</div>
 
-      <div className="results-grid">
+      {!isPractice && results.suddenDeathRounds > 0 && (
+        <p className="view-description">Decided by sudden death after {results.suddenDeathRounds} question(s).</p>
+      )}
+
+      <div className={`results-grid ${isPractice ? 'results-grid--practice' : ''}`}>
         {rankedPlayers.map((player, index) => {
           const isWinner = player.playerId === results.winnerPlayerId
 
@@ -26,7 +33,7 @@ export default function ResultsView({ results, playerNames, onRestart }) {
               className={`result-card ${isWinner ? 'result-card--winner' : ''}`}
               key={player.playerId}
             >
-              <span className="result-rank">#{index + 1}</span>
+              {!isPractice && <span className="result-rank">#{index + 1}</span>}
               <h3>
                 {playerNames[player.playerId]} {isWinner && <span aria-label="Winner">🏆</span>}
               </h3>
@@ -64,7 +71,7 @@ export default function ResultsView({ results, playerNames, onRestart }) {
       </div>
 
       <button className="primary-button" onClick={onRestart} type="button">
-        Play again
+        Back to dashboard
       </button>
     </div>
   )

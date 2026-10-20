@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 // developer-Hafsa
 // logged-in home screen and past quiz scores
-export default function DashboardView({ user, quizHistory, onStartQuiz, onLogOut }) {
+export default function DashboardView({ user, quizHistory, onStartQuiz, onStartPractice, onLogOut }) {
   // Sprint 2: ask for confirmation before logging out
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
@@ -22,6 +22,11 @@ export default function DashboardView({ user, quizHistory, onStartQuiz, onLogOut
         Start New Quiz
       </button>
 
+      {/* developer-Leon */}
+      <button className="secondary-button practice-button" onClick={onStartPractice} type="button">
+        Solo Practice
+      </button>
+
       <div className="quiz-history">
         <h3>Your Quiz History</h3>
         {quizHistory.length === 0 ? (
@@ -37,7 +42,7 @@ export default function DashboardView({ user, quizHistory, onStartQuiz, onLogOut
                 <li className="history-item" key={index}>
                   <span>{new Date(entry.playedAt).toLocaleDateString()}</span>
                   <span>{entry.score} pts</span>
-                  <span>{entry.won ? 'Won' : entry.isTie ? 'Tie' : 'Lost'}</span>
+                  <span>{entry.mode === 'practice' ? 'Practice' : entry.won ? 'Won' : entry.isTie ? 'Tie' : 'Lost'}</span>
                 </li>
               ))}
           </ul>
